@@ -48,7 +48,7 @@ COPY supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Installing Go
 RUN if [ "${development}" = "true" ]; then \
-    curl -O -L https://golang.org/dl/go${GO_VERSION}.linux-${GO_ARCH}.tar.gz && \
+    curl -O -L https://go.dev/dl/go${GO_VERSION}.linux-${GO_ARCH}.tar.gz && \
     rm -rf /usr/local/go && \
     tar -C /usr/local -xzf go${GO_VERSION}.linux-${GO_ARCH}.tar.gz && \
     echo "export PATH=$PATH:/usr/local/go/bin:~/go/bin" >> ~/.bashrc && \
@@ -57,6 +57,7 @@ RUN if [ "${development}" = "true" ]; then \
 
 # Installing delve for debugging
 RUN if [ "${development}" = "true" ]; then \
+    /usr/local/go/bin/go env -w GOPROXY=https://goproxy.cn,direct; \
     /usr/local/go/bin/go install github.com/go-delve/delve/cmd/dlv@latest; \
     fi
 

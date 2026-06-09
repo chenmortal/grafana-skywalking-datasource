@@ -5,6 +5,7 @@
   "id": "chenmortal-skywalking-datasource",
   "metrics": true,
   "backend": true,
+  "tracing": true,
   "executable": "gpx_skywalking",
   "info": {
     "description": "",
@@ -22,7 +23,7 @@
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=12.3.0",
+    "grafanaDependency": ">=10.3.0-0",
     "plugins": []
   }
 }

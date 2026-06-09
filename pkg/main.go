@@ -1,11 +1,12 @@
+//go:generate go run github.com/Khan/genqlient
 package main
 
 import (
 	"os"
 
+	"github.com/chenmortal/skywalking/pkg/plugin"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
-	"github.com/chenmortal/skywalking/pkg/plugin"
 )
 
 func main() {

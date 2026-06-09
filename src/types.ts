@@ -1,13 +1,19 @@
 import { DataSourceJsonData } from '@grafana/data';
 import { DataQuery } from '@grafana/schema';
 
-export interface MyQuery extends DataQuery {
+export interface SkywalkingQuery extends DataQuery {
+  layer: string;
+  query: string | null | undefined;
   queryText?: string;
   constant: number;
+  queryType?: SkywalkingQueryType;
+  serviceId?: string;
+  endpoint?: string;
 }
 
-export const DEFAULT_QUERY: Partial<MyQuery> = {
+export const DEFAULT_QUERY: Partial<SkywalkingQuery> = {
   constant: 6.5,
+  layer: 'GENERAL',
 };
 
 export interface DataPoint {
@@ -32,3 +38,7 @@ export interface MyDataSourceOptions extends DataSourceJsonData {
 export interface MySecureJsonData {
   apiKey?: string;
 }
+
+export type SkywalkingQueryType = 'search' | 'dependencyGraph';
+
+

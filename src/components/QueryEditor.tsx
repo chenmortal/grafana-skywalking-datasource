@@ -1,45 +1,73 @@
-import React, { ChangeEvent } from 'react';
-import { InlineField, Input, Stack } from '@grafana/ui';
+import { css } from '@emotion/css';
+import React, { } from 'react';
+import { InlineField, InlineFieldRow,  QueryField,  RadioButtonGroup, Stack, useStyles2 } from '@grafana/ui';
 import { QueryEditorProps } from '@grafana/data';
-import { DataSource } from '../datasource';
-import { MyDataSourceOptions, MyQuery } from '../types';
+import { SkywalkingDataSource } from '../datasource';
+import { MyDataSourceOptions, SkywalkingQuery, SkywalkingQueryType } from '../types';
+import SearchForm from './SearchForm';
 
-type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
+type Props = QueryEditorProps<SkywalkingDataSource, SkywalkingQuery, MyDataSourceOptions>;
 
-export function QueryEditor({ query, onChange, onRunQuery }: Props) {
-  const onQueryTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onChange({ ...query, queryText: event.target.value });
+export function QueryEditor({ datasource,query, onChange, onRunQuery }: Props) {
+  const styles = useStyles2(getStyles);
+    const onChangeQuery = (value: string) => {
+    const nextQuery: SkywalkingQuery = { ...query, query: value };
+    onChange(nextQuery);
+  };
+  const renderEditorBody = () => {
+    switch (query.queryType) {
+      case 'search':
+        return <SearchForm datasource={datasource} query={query} onChange={onChange} />;
+      case 'dependencyGraph':
+        return null;
+      default:
+        return (
+          <InlineFieldRow>
+            <InlineField label="Trace ID" labelWidth={14} grow>
+              <QueryField
+                query={query.query}
+                onChange={onChangeQuery}
+                onRunQuery={onRunQuery}
+                placeholder={'Enter a Trace ID (run with Shift+Enter)'}
+                portalOrigin="jaeger"
+              />
+            </InlineField>
+          </InlineFieldRow>
+        );
+    }
   };
 
-  const onConstantChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onChange({ ...query, constant: parseFloat(event.target.value) });
-    // executes the query
-    onRunQuery();
-  };
-
-  const { queryText, constant } = query;
 
   return (
-    <Stack gap={0}>
-      <InlineField label="Constant">
-        <Input
-          id="query-editor-constant"
-          onChange={onConstantChange}
-          value={constant}
-          width={8}
-          type="number"
-          step="0.1"
-        />
+  <>
+  <div className={styles.container}>
+    <InlineFieldRow>
+      <InlineField label="Query Type" grow={true} >
+        <Stack gap={1} alignItems="center" justifyContent="space-between">
+          <RadioButtonGroup<SkywalkingQueryType> value={query.queryType} 
+            options={[
+              { label: 'Search', value: 'search' },
+              { value: undefined, label: 'TraceID' },
+              { label: 'Dependency Graph', value: 'dependencyGraph' },
+            ]}
+            onChange={(v) =>
+                  onChange({
+                    ...query,
+                    queryType: v,
+                  })
+                }
+          />
+        </Stack>
       </InlineField>
-      <InlineField label="Query Text" labelWidth={16} tooltip="Not used yet">
-        <Input
-          id="query-editor-query-text"
-          onChange={onQueryTextChange}
-          value={queryText || ''}
-          required
-          placeholder="Enter a query"
-        />
-      </InlineField>
-    </Stack>
+    </InlineFieldRow>
+     {renderEditorBody()}
+  </div>
+  </>
   );
 }
+
+const getStyles = () => ({
+  container: css({
+    width: '100%',
+  }),
+});

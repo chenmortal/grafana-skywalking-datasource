@@ -1,0 +1,7 @@
+# Default genqlient config; for full documentation see:
+# https://github.com/Khan/genqlient/blob/main/docs/genqlient.yaml
+schema: ../graphql/schema.graphql
+operations:
+- ../graphql/selector.graphql
+generated: plugin/selector.go
+package: plugin

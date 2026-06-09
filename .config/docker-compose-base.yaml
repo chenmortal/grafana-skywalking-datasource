@@ -6,9 +6,9 @@ services:
     build:
       context: .
       args:
-        grafana_image: ${GRAFANA_IMAGE:-grafana-enterprise}
+        grafana_image: ${GRAFANA_IMAGE:-grafana-oss}
         grafana_version: ${GRAFANA_VERSION:-12.4.0}
-        development: ${DEVELOPMENT:-false}
+        development: ${DEVELOPMENT:-true}
         anonymous_auth_enabled: ${ANONYMOUS_AUTH_ENABLED:-true}
     ports:
       - 3000:3000/tcp
