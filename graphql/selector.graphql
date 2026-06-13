@@ -1,21 +1,34 @@
 query queryServices($layer: String!) {
-	services: listServices(layer: $layer) {
-		id
-		value: name
-		label: name
-		group    
-		layers
-		normal
-		shortName  
-	}
+  services: listServices(layer: $layer) {
+    id
+    value: name
+    label: name
+    group
+    layers
+    normal
+    shortName
+  }
 }
 query listLayer {
-	layers: listLayers
+  layers: listLayers
 }
 query queryEndpoints($serviceId: ID!, $keyword: String!, $duration: Duration, $limit: Int!) {
-	pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: $limit, duration: $duration) {
-		id
-		value: name
-		label: name   
-	}
+  pods: findEndpoint(serviceId: $serviceId, keyword: $keyword, limit: $limit, duration: $duration) {
+    id
+    value: name
+    label: name
+  }
+}
+query queryInstances($serviceId: ID!, $duration: Duration!) {
+  pods: listInstances(duration: $duration, serviceId: $serviceId) {
+    id
+    value: name
+    label: name
+    language
+    instanceUUID
+    attributes {
+      name
+      value
+    }
+  }
 }

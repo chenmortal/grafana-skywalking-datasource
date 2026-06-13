@@ -9,6 +9,17 @@ export type Duration = {
   step: Step;
 };
 
+export type Language =
+  | 'DOTNET'
+  | 'GO'
+  | 'JAVA'
+  | 'LUA'
+  | 'NODEJS'
+  | 'PHP'
+  | 'PYTHON'
+  | 'RUBY'
+  | 'UNKNOWN';
+
 export type Step =
   | 'DAY'
   | 'HOUR'
@@ -36,3 +47,11 @@ export type QueryEndpointsQueryVariables = Exact<{
 
 
 export type QueryEndpointsQuery = { pods: Array<{ id: string, value: string, label: string }> };
+
+export type QueryInstancesQueryVariables = Exact<{
+  serviceId: string | number;
+  duration: Duration;
+}>;
+
+
+export type QueryInstancesQuery = { pods: Array<{ id: string, language: Language, instanceUUID: string, value: string, label: string, attributes: Array<{ name: string, value: string }> }> };

@@ -55,6 +55,21 @@ func (s SkywalkingClient) QueryEndpoints(ctx context.Context, serviceId, keyword
 	return resp, nil
 }
 
+func (s SkywalkingClient) QueryInstances(ctx context.Context, serviceId string, fromTime, toTime time.Time) (*queryInstancesResponse, error) {
+	step := calculateStep(fromTime, toTime)
+	duration := Duration{
+		Start:     formatTimeToString(fromTime, step),
+		End:       formatTimeToString(toTime, step),
+		Step:      step,
+		ColdStage: false,
+	}
+	resp, err := queryInstances(ctx, s.graphqlClient, serviceId, duration)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func formatTimeToString(t time.Time, step Step) string {
 	switch step {
 	case StepDay:

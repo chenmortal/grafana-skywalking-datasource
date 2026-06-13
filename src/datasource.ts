@@ -1,7 +1,7 @@
 import { DataSourceInstanceSettings, CoreApp, ScopedVars } from '@grafana/data';
 import { DataSourceWithBackend, getTemplateSrv } from '@grafana/runtime';
 import { SkywalkingQuery, MyDataSourceOptions, DEFAULT_QUERY } from './types';
-import { ListLayerQuery, QueryEndpointsQuery, QueryServicesQuery } from 'type/operations';
+import { ListLayerQuery, QueryEndpointsQuery, QueryInstancesQuery, QueryServicesQuery } from 'type/operations';
 import { getTimeRangeValues } from 'utils';
 
 
@@ -41,6 +41,17 @@ export class SkywalkingDataSource extends DataSourceWithBackend<SkywalkingQuery,
       limit:limit,
     };
     const response= await this.postResource<QueryEndpointsQuery>("endpoints",data);
+    return response.pods || []
+  }
+
+  async queryInstances(serviceId:string){
+    const range=getTimeRangeValues()
+    const data={
+      serviceId: serviceId,
+      fromTime:range.from,
+      toTime:range.to,
+    };
+    const response= await this.postResource<QueryInstancesQuery>("instances",data);
     return response.pods || []
   }
 

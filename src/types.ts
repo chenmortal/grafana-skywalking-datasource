@@ -9,6 +9,7 @@ export interface SkywalkingQuery extends DataQuery {
   queryType?: SkywalkingQueryType;
   serviceId?: string;
   endpoint?: string;
+  serviceInstanceId?: string;
 }
 
 export const DEFAULT_QUERY: Partial<SkywalkingQuery> = {

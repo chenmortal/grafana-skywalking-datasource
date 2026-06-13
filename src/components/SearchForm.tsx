@@ -19,11 +19,13 @@ export function SearchForm({ datasource, query, onChange }: Props) {
   const [layerOptions, setLayerOptions] = useState<ComboboxOption[]>([DEFAULT_LAYER]);
   const [serviceOptions, setServiceOptions] = useState<ComboboxOption<string>[]>([]);
   const [endpointOptions, setEndpointOptions] = useState<ComboboxOption<string>[]>([]);
+  const [serviceInstanceIdOptions, setServiceInstanceIdOptions] = useState<ComboboxOption<string>[]>([]);
 
   const { from, to } = useTimeRangeFromUrl();
 
   useEffect(() => {
     loadEndpoints();
+    loadInstances();
   }, [from, to]);
 
   const loadLayers = useCallback(async () => {
@@ -64,6 +66,16 @@ export function SearchForm({ datasource, query, onChange }: Props) {
     }
   }, [datasource, query.serviceId, query.queryText]);
 
+  const loadInstances = useCallback(async () => {
+    try {
+      const instances = await datasource.queryInstances(query.serviceId!);
+      setServiceInstanceIdOptions(instances.map((i) => ({ label: i.label, value: i.id })));
+    } catch (error) {
+      console.error('Failed to load instances:', error);
+      setServiceInstanceIdOptions([]);
+    }
+  }, [datasource, query.serviceId]);
+
   useEffect(() => {
     loadServices();
   }, [datasource, query.layer]);
@@ -80,6 +92,19 @@ export function SearchForm({ datasource, query, onChange }: Props) {
       setEndpointOptions([]);
     }
   }, [query.serviceId, loadEndpoints]);
+
+  useEffect(() => {
+    onChange({
+      ...query,
+      serviceInstanceId: undefined,
+    });
+
+    if (query.serviceId) {
+      loadInstances();
+    } else {
+      setServiceInstanceIdOptions([]);
+    }
+  }, [query.serviceId, loadInstances]);
 
   useEffect(() => {
     onChange({
@@ -136,6 +161,20 @@ export function SearchForm({ datasource, query, onChange }: Props) {
                 onChange({
                   ...query,
                   endpoint: v?.value!,
+                });
+              }}
+            />
+          </InlineField>
+        </InlineFieldRow>
+        <InlineFieldRow>
+          <InlineField label="Instance" labelWidth={14} grow>
+            <Combobox
+              options={serviceInstanceIdOptions}
+              value={serviceInstanceIdOptions.find((v) => v?.value === query.serviceInstanceId) || undefined}
+              onChange={(v) => {
+                onChange({
+                  ...query,
+                  serviceInstanceId: v?.value!,
                 });
               }}
             />

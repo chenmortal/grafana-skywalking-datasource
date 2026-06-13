@@ -16,6 +16,7 @@ func (s *Service) registerResourceRoutes() *http.ServeMux {
 	router.HandleFunc("GET /layers", s.withDatasourceHandlerFunc(getListLayerHandler))
 	router.HandleFunc("GET /services/{layer}", s.withDatasourceHandlerFunc(queryServicesHandler))
 	router.HandleFunc("POST /endpoints", s.withDatasourceHandlerFunc(queryEndpointsHandler))
+	router.HandleFunc("POST /instances", s.withDatasourceHandlerFunc(queryInstancesHandler))
 	// router.HandleFunc("GET /services/{service}/operations", s.withDatasourceHandlerFunc(getOperationsHandler))
 	return router
 }
@@ -55,12 +56,36 @@ func queryEndpointsHandler(d *datasourceInfo) http.HandlerFunc {
 	}
 }
 
+func queryInstancesHandler(d *datasourceInfo) http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		var req queryInstancesRequest
+
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			writeResponse(nil, err, rw, d.SkywalkingClient.logger)
+			return
+		}
+
+		instances, err := d.SkywalkingClient.QueryInstances(
+			r.Context(),
+			req.ServiceId,
+			time.UnixMilli(req.FromTime),
+			time.UnixMilli(req.ToTime))
+		writeResponse(instances, err, rw, d.SkywalkingClient.logger)
+	}
+}
+
 type queryEndpointsRequest struct {
 	ServiceId string `json:"serviceId"`
 	Keyword   string `json:"keyword"`
 	FromTime  int64  `json:"fromTime"`
 	ToTime    int64  `json:"toTime"`
 	Limit     int    `json:"limit"`
+}
+
+type queryInstancesRequest struct {
+	ServiceId string `json:"serviceId"`
+	FromTime  int64  `json:"fromTime"`
+	ToTime    int64  `json:"toTime"`
 }
 
 func (s *Service) withDatasourceHandlerFunc(getHandler func(d *datasourceInfo) http.HandlerFunc) func(rw http.ResponseWriter, r *http.Request) {

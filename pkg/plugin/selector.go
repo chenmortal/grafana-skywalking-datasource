@@ -27,6 +27,32 @@ func (v *Duration) GetStep() Step { return v.Step }
 // GetColdStage returns Duration.ColdStage, and is useful for accessing the field via an interface.
 func (v *Duration) GetColdStage() bool { return v.ColdStage }
 
+type Language string
+
+const (
+	LanguageUnknown Language = "UNKNOWN"
+	LanguageJava    Language = "JAVA"
+	LanguageDotnet  Language = "DOTNET"
+	LanguageNodejs  Language = "NODEJS"
+	LanguagePython  Language = "PYTHON"
+	LanguageRuby    Language = "RUBY"
+	LanguageGo      Language = "GO"
+	LanguageLua     Language = "LUA"
+	LanguagePhp     Language = "PHP"
+)
+
+var AllLanguage = []Language{
+	LanguageUnknown,
+	LanguageJava,
+	LanguageDotnet,
+	LanguageNodejs,
+	LanguagePython,
+	LanguageRuby,
+	LanguageGo,
+	LanguageLua,
+	LanguagePhp,
+}
+
 type Step string
 
 const (
@@ -62,6 +88,18 @@ func (v *__queryEndpointsInput) GetDuration() Duration { return v.Duration }
 
 // GetLimit returns __queryEndpointsInput.Limit, and is useful for accessing the field via an interface.
 func (v *__queryEndpointsInput) GetLimit() int { return v.Limit }
+
+// __queryInstancesInput is used internally by genqlient
+type __queryInstancesInput struct {
+	ServiceId string   `json:"serviceId"`
+	Duration  Duration `json:"duration"`
+}
+
+// GetServiceId returns __queryInstancesInput.ServiceId, and is useful for accessing the field via an interface.
+func (v *__queryInstancesInput) GetServiceId() string { return v.ServiceId }
+
+// GetDuration returns __queryInstancesInput.Duration, and is useful for accessing the field via an interface.
+func (v *__queryInstancesInput) GetDuration() Duration { return v.Duration }
 
 // __queryServicesInput is used internally by genqlient
 type __queryServicesInput struct {
@@ -102,6 +140,56 @@ type queryEndpointsResponse struct {
 
 // GetPods returns queryEndpointsResponse.Pods, and is useful for accessing the field via an interface.
 func (v *queryEndpointsResponse) GetPods() []queryEndpointsPodsEndpoint { return v.Pods }
+
+// queryInstancesPodsServiceInstance includes the requested fields of the GraphQL type ServiceInstance.
+type queryInstancesPodsServiceInstance struct {
+	Id           string                                                 `json:"id"`
+	Value        string                                                 `json:"value"`
+	Label        string                                                 `json:"label"`
+	Language     Language                                               `json:"language"`
+	InstanceUUID string                                                 `json:"instanceUUID"`
+	Attributes   []queryInstancesPodsServiceInstanceAttributesAttribute `json:"attributes"`
+}
+
+// GetId returns queryInstancesPodsServiceInstance.Id, and is useful for accessing the field via an interface.
+func (v *queryInstancesPodsServiceInstance) GetId() string { return v.Id }
+
+// GetValue returns queryInstancesPodsServiceInstance.Value, and is useful for accessing the field via an interface.
+func (v *queryInstancesPodsServiceInstance) GetValue() string { return v.Value }
+
+// GetLabel returns queryInstancesPodsServiceInstance.Label, and is useful for accessing the field via an interface.
+func (v *queryInstancesPodsServiceInstance) GetLabel() string { return v.Label }
+
+// GetLanguage returns queryInstancesPodsServiceInstance.Language, and is useful for accessing the field via an interface.
+func (v *queryInstancesPodsServiceInstance) GetLanguage() Language { return v.Language }
+
+// GetInstanceUUID returns queryInstancesPodsServiceInstance.InstanceUUID, and is useful for accessing the field via an interface.
+func (v *queryInstancesPodsServiceInstance) GetInstanceUUID() string { return v.InstanceUUID }
+
+// GetAttributes returns queryInstancesPodsServiceInstance.Attributes, and is useful for accessing the field via an interface.
+func (v *queryInstancesPodsServiceInstance) GetAttributes() []queryInstancesPodsServiceInstanceAttributesAttribute {
+	return v.Attributes
+}
+
+// queryInstancesPodsServiceInstanceAttributesAttribute includes the requested fields of the GraphQL type Attribute.
+type queryInstancesPodsServiceInstanceAttributesAttribute struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+// GetName returns queryInstancesPodsServiceInstanceAttributesAttribute.Name, and is useful for accessing the field via an interface.
+func (v *queryInstancesPodsServiceInstanceAttributesAttribute) GetName() string { return v.Name }
+
+// GetValue returns queryInstancesPodsServiceInstanceAttributesAttribute.Value, and is useful for accessing the field via an interface.
+func (v *queryInstancesPodsServiceInstanceAttributesAttribute) GetValue() string { return v.Value }
+
+// queryInstancesResponse is returned by queryInstances on success.
+type queryInstancesResponse struct {
+	Pods []queryInstancesPodsServiceInstance `json:"pods"`
+}
+
+// GetPods returns queryInstancesResponse.Pods, and is useful for accessing the field via an interface.
+func (v *queryInstancesResponse) GetPods() []queryInstancesPodsServiceInstance { return v.Pods }
 
 // queryServicesResponse is returned by queryServices on success.
 type queryServicesResponse struct {
@@ -202,6 +290,50 @@ func queryEndpoints(
 	}
 
 	data_ = &queryEndpointsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by queryInstances.
+const queryInstances_Operation = `
+query queryInstances ($serviceId: ID!, $duration: Duration!) {
+	pods: listInstances(duration: $duration, serviceId: $serviceId) {
+		id
+		value: name
+		label: name
+		language
+		instanceUUID
+		attributes {
+			name
+			value
+		}
+	}
+}
+`
+
+func queryInstances(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	serviceId string,
+	duration Duration,
+) (data_ *queryInstancesResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "queryInstances",
+		Query:  queryInstances_Operation,
+		Variables: &__queryInstancesInput{
+			ServiceId: serviceId,
+			Duration:  duration,
+		},
+	}
+
+	data_ = &queryInstancesResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
