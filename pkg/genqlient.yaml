@@ -2,6 +2,11 @@
 # https://github.com/Khan/genqlient/blob/main/docs/genqlient.yaml
 schema: ../graphql/schema.graphql
 operations:
-- ../graphql/selector.graphql
-generated: plugin/selector.go
+  - ../graphql/selector.graphql
+  - ../graphql/trace.graphql
+generated: plugin/graphql.go
 package: plugin
+
+bindings:
+  Long:
+    type: int64

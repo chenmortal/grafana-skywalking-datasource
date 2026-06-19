@@ -26,6 +26,7 @@ func ProvideService(httpClientProvider *httpclient.Provider) *Service {
 
 type datasourceInfo struct {
 	SkywalkingClient SkywalkingClient
+	Settings         backend.DataSourceInstanceSettings
 }
 
 func newInstanceSettings(httpClientProvider *httpclient.Provider) datasource.InstanceFactoryFunc {
@@ -45,7 +46,7 @@ func newInstanceSettings(httpClientProvider *httpclient.Provider) datasource.Ins
 		}
 
 		logger := logger.FromContext(ctx)
-		skywalkingClient, err := New(httpClient, logger, settings)
+		skywalkingClient, err := New(httpClient, logger, settings.URL)
 		if err != nil {
 			return nil, fmt.Errorf("error creating skywalking client: %w", err)
 		}
@@ -92,4 +93,12 @@ func (s *Service) CheckHealth(ctx context.Context, req *backend.CheckHealthReque
 func (s *Service) CallResource(ctx context.Context, req *backend.CallResourceRequest, sender backend.CallResourceResponseSender) error {
 	handler := httpadapter.New(s.registerResourceRoutes())
 	return handler.CallResource(ctx, req, sender)
+}
+
+func (s *Service) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
+	dsInfo, err := s.getDSInfo(ctx, req.PluginContext)
+	if err != nil {
+		return nil, err
+	}
+	return queryData(ctx, dsInfo, req)
 }

@@ -41,7 +41,7 @@ export function SearchForm({ datasource, query, onChange }: Props) {
 
   const loadServices = useCallback(async () => {
     try {
-      const services = await datasource.queryServices(query.layer);
+      const services = await datasource.queryServices(query.layer!);
       const serviceOptions: ComboboxOption<string>[] = services.map((s: any) => ({
         label: s.label,
         value: s.id,
@@ -56,7 +56,7 @@ export function SearchForm({ datasource, query, onChange }: Props) {
 
   const loadEndpoints = useCallback(async () => {
     try {
-      const endpoints = await datasource.queryEndpoints(query.serviceId!, query.queryText!, 20);
+      const endpoints = await datasource.queryEndpoints(query.condition.serviceId!, query.endpointQueryText!, 20);
       setEndpointOptions(
         endpoints.map((e) => ({ label: e.label, value: e.id, description: 'service : ' + descodeServiceID(e.id) }))
       );
@@ -64,17 +64,17 @@ export function SearchForm({ datasource, query, onChange }: Props) {
       console.error('Failed to load endpoints:', error);
       setEndpointOptions([]);
     }
-  }, [datasource, query.serviceId, query.queryText]);
+  }, [datasource, query.condition.serviceId!, query.endpointQueryText]);
 
   const loadInstances = useCallback(async () => {
     try {
-      const instances = await datasource.queryInstances(query.serviceId!);
+      const instances = await datasource.queryInstances(query.condition.serviceId!);
       setServiceInstanceIdOptions(instances.map((i) => ({ label: i.label, value: i.id })));
     } catch (error) {
       console.error('Failed to load instances:', error);
       setServiceInstanceIdOptions([]);
     }
-  }, [datasource, query.serviceId]);
+  }, [datasource, query.condition.serviceId]);
 
   useEffect(() => {
     loadServices();
@@ -83,33 +83,42 @@ export function SearchForm({ datasource, query, onChange }: Props) {
   useEffect(() => {
     onChange({
       ...query,
-      endpoint: undefined,
+      condition: {
+        ...query.condition,
+        endpointId: undefined,
+      },
     });
 
-    if (query.serviceId) {
+    if (query.condition.serviceId) {
       loadEndpoints();
     } else {
       setEndpointOptions([]);
     }
-  }, [query.serviceId, loadEndpoints]);
+  }, [query.condition.serviceId, loadEndpoints]);
 
   useEffect(() => {
     onChange({
       ...query,
-      serviceInstanceId: undefined,
+      condition: {
+        ...query.condition,
+        serviceInstanceId: undefined,
+      },
     });
 
-    if (query.serviceId) {
+    if (query.condition.serviceId) {
       loadInstances();
     } else {
       setServiceInstanceIdOptions([]);
     }
-  }, [query.serviceId, loadInstances]);
+  }, [query.condition.serviceId, loadInstances]);
 
   useEffect(() => {
     onChange({
       ...query,
-      serviceId: undefined,
+      condition: {
+        ...query.condition,
+        serviceId: undefined,
+      },
     });
 
     if (query.layer) {
@@ -142,11 +151,14 @@ export function SearchForm({ datasource, query, onChange }: Props) {
           <InlineField label="Service" labelWidth={14} grow>
             <Combobox
               options={serviceOptions}
-              value={serviceOptions.find((v) => v?.value === query.serviceId) || undefined}
+              value={serviceOptions.find((v) => v?.value === query.condition.serviceId) || undefined}
               onChange={(v) => {
                 onChange({
                   ...query,
-                  serviceId: v?.value!,
+                  condition: {
+                    ...query.condition,
+                    serviceId: v?.value!,
+                  },
                 });
               }}
             />
@@ -156,11 +168,14 @@ export function SearchForm({ datasource, query, onChange }: Props) {
           <InlineField label="Endpoint" labelWidth={14} grow>
             <Combobox
               options={endpointOptions}
-              value={endpointOptions.find((v) => v?.value === query.endpoint) || undefined}
+              value={endpointOptions.find((v) => v?.value === query.condition.endpointId) || undefined}
               onChange={(v) => {
                 onChange({
                   ...query,
-                  endpoint: v?.value!,
+                  condition: {
+                    ...query.condition,
+                    endpointId: v?.value!,
+                  },
                 });
               }}
             />
@@ -170,11 +185,14 @@ export function SearchForm({ datasource, query, onChange }: Props) {
           <InlineField label="Instance" labelWidth={14} grow>
             <Combobox
               options={serviceInstanceIdOptions}
-              value={serviceInstanceIdOptions.find((v) => v?.value === query.serviceInstanceId) || undefined}
+              value={serviceInstanceIdOptions.find((v) => v?.value === query.condition.serviceInstanceId) || undefined}
               onChange={(v) => {
                 onChange({
                   ...query,
-                  serviceInstanceId: v?.value!,
+                  condition: {
+                    ...query.condition,
+                    serviceInstanceId: v?.value!,
+                  },
                 });
               }}
             />

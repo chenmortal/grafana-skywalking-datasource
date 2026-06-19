@@ -22,83 +22,83 @@
 
 # Service is a logic concept, representing a collection of runnable context.
 type Service {
-    # Service ID = BASE64(name) + '.1' which keeps the most compatibility to 8.x data formats.
-    # All metrics of the service would refer to this ID.
-    # The layer ID would not be included in the service ID, as a service could have multidimensional monitoring, such as ALS + DP for the same service
-    # ----- Storage -----
-    # Row ID in service_traffic entity includes layer ID.
-    # Service ID = BASE64(name) + '.' + Layer ID
-    # -------------------
-    id: ID!
-    # The unqiue name gloablly. 
-    # Typically, name could be formated as `group::name` which would be recognized as a group and a short name.
-    name: String!
-    # The custom/logic group of the service
-    group: String!
-    # The unique name in the group. Mostly for visualization.
-    shortName: String!
-    # Layer represents an abstract framework in the computer science, such as operation system(VM layer), Kubernetes(k8s layer),
-    # Service Mesh(typical Istio+Envoy layer).
-    # The name of layer is a string, but we would reserve the following for visualization(UI)
-    # https://github.com/apache/skywalking/blob/master/oap-server/server-core/src/main/java/org/apache/skywalking/oap/server/core/analysis/Layer.java
-    #
-    # UI uses this literal layer names to provide various layout for their services with metrics.
-    #
-    # The layer collection is from the instances of this service. So, one service could have multiple layer due to instance-level registration.
-    layers: [String!]!
-    # Normal service is the service having installed agent or metrics reported directly.
-    # Unnormal service is conjectural service, usually detected by the agent.
-    normal: Boolean
+  # Service ID = BASE64(name) + '.1' which keeps the most compatibility to 8.x data formats.
+  # All metrics of the service would refer to this ID.
+  # The layer ID would not be included in the service ID, as a service could have multidimensional monitoring, such as ALS + DP for the same service
+  # ----- Storage -----
+  # Row ID in service_traffic entity includes layer ID.
+  # Service ID = BASE64(name) + '.' + Layer ID
+  # -------------------
+  id: ID!
+  # The unqiue name gloablly.
+  # Typically, name could be formated as `group::name` which would be recognized as a group and a short name.
+  name: String!
+  # The custom/logic group of the service
+  group: String!
+  # The unique name in the group. Mostly for visualization.
+  shortName: String!
+  # Layer represents an abstract framework in the computer science, such as operation system(VM layer), Kubernetes(k8s layer),
+  # Service Mesh(typical Istio+Envoy layer).
+  # The name of layer is a string, but we would reserve the following for visualization(UI)
+  # https://github.com/apache/skywalking/blob/master/oap-server/server-core/src/main/java/org/apache/skywalking/oap/server/core/analysis/Layer.java
+  #
+  # UI uses this literal layer names to provide various layout for their services with metrics.
+  #
+  # The layer collection is from the instances of this service. So, one service could have multiple layer due to instance-level registration.
+  layers: [String!]!
+  # Normal service is the service having installed agent or metrics reported directly.
+  # Unnormal service is conjectural service, usually detected by the agent.
+  normal: Boolean
 }
 
 # The minimal runnable unit in the service. It provides consistent and fundamental capabilities in physical perspective.
 # A service, as a logic unit, have multiple instances in the runtime.
 # Such as, an OS-level processor, a pod in k8s, a running function in the FAAS engine.
 type ServiceInstance {
-    id: ID!
-    name: String!
-    attributes: [Attribute!]!
-    language: Language!
-    instanceUUID: String!
+  id: ID!
+  name: String!
+  attributes: [Attribute!]!
+  language: Language!
+  instanceUUID: String!
 }
 
 type Attribute {
-    name: String!
-    value: String!
+  name: String!
+  value: String!
 }
 
 # The endpoint is the minimal functional unit.
 # Typically, it presents a URI or gRPC service name in the service.
 # Different from instance, this is a logical functional unit.
 type Endpoint {
-    id: ID!
-    name: String!
+  id: ID!
+  name: String!
 }
 
 type EndpointInfo {
-    id: ID!
-    name: String!
-    serviceId: ID!
-    serviceName: String!
+  id: ID!
+  name: String!
+  serviceId: ID!
+  serviceName: String!
 }
 
 # The process is an operating system process under service instance.
 type Process {
-    # Process entity
-    id: ID!
-    name: String!
-    serviceId: ID!
-    serviceName: String!
-    instanceId: ID!
-    instanceName: String!
-    # Which agent report this process.
-    agentId: String!
-    # The process found type.
-    detectType: String!
-    # The process attributes, different process detect type have different corresponding attributes.
-    attributes: [Attribute!]!
-    # The process labels.
-    labels: [String!]!
+  # Process entity
+  id: ID!
+  name: String!
+  serviceId: ID!
+  serviceName: String!
+  instanceId: ID!
+  instanceName: String!
+  # Which agent report this process.
+  agentId: String!
+  # The process found type.
+  detectType: String!
+  # The process attributes, different process detect type have different corresponding attributes.
+  attributes: [Attribute!]!
+  # The process labels.
+  labels: [String!]!
 }
 
 type TimeInfo {
@@ -109,74 +109,74 @@ type TimeInfo {
 }
 
 type RecordsTTL {
-    # Cover hot and warm data for BanyanDB.
-    normal: Int!
-    trace: Int!
-    zipkinTrace: Int!
-    log: Int!
-    browserErrorLog: Int!
-    # Cold data, '-1' represents no cold stage data.
-    coldNormal: Int!
-    coldTrace: Int!
-    coldZipkinTrace: Int!
-    coldLog: Int!
-    coldBrowserErrorLog: Int!
+  # Cover hot and warm data for BanyanDB.
+  normal: Int!
+  trace: Int!
+  zipkinTrace: Int!
+  log: Int!
+  browserErrorLog: Int!
+  # Cold data, '-1' represents no cold stage data.
+  coldNormal: Int!
+  coldTrace: Int!
+  coldZipkinTrace: Int!
+  coldLog: Int!
+  coldBrowserErrorLog: Int!
 }
 
 type MetricsTTL {
-    # Cover hot and warm data for BanyanDB.
-    minute: Int!
-    hour: Int!
-    day: Int!
-    # Cold data, '-1' represents no cold stage data.
-    coldMinute: Int!
-    coldHour: Int!
-    coldDay: Int!
+  # Cover hot and warm data for BanyanDB.
+  minute: Int!
+  hour: Int!
+  day: Int!
+  # Cold data, '-1' represents no cold stage data.
+  coldMinute: Int!
+  coldHour: Int!
+  coldDay: Int!
 }
 
 extend type Query {
-    # Read all available layers
-    # UI could use this list to determine available dashboards/panels
-    # The available layers would change with time in the runtime, because new service could be detected in any time.
-    # This list should be loaded periodically.
-    listLayers: [String!]!
-    
-    # Read the service list according to layer.
-    listServices(layer: String): [Service!]!
-    # Find service according to given ID. Return null if not existing.
-    getService(serviceId: String!): Service
-    # Search and find service according to given name. Return null if not existing.
-    findService(serviceName: String!): Service
-    
-    # Read service instance list.
-    listInstances(duration: Duration!, serviceId: ID!): [ServiceInstance!]!
-    listInstancesByName(duration: Duration!, service: ServiceCondition!): [ServiceInstance!]!
-    # Search and find service instance according to given ID. Return null if not existing.
-    getInstance(instanceId: String!): ServiceInstance
+  # Read all available layers
+  # UI could use this list to determine available dashboards/panels
+  # The available layers would change with time in the runtime, because new service could be detected in any time.
+  # This list should be loaded periodically.
+  listLayers: [String!]!
 
-    # Search and find matched endpoints according to given service and keyword(optional)
-    # If no keyword, randomly choose endpoint based on `limit` value.
-    # If duration is nil mean get all endpoints, otherwise, get the endpoint list in the given duration.
-    findEndpoint(keyword: String, serviceId: ID!, limit: Int!, duration: Duration): [Endpoint!]!
-    findEndpointByName(keyword: String, service: ServiceCondition!, limit: Int!, duration: Duration): [Endpoint!]!
-    getEndpointInfo(endpointId: ID!): EndpointInfo
+  # Read the service list according to layer.
+  listServices(layer: String): [Service!]!
+  # Find service according to given ID. Return null if not existing.
+  getService(serviceId: String!): Service
+  # Search and find service according to given name. Return null if not existing.
+  findService(serviceName: String!): Service
 
-    # Read process list.
-    listProcesses(duration: Duration!, instanceId: ID!): [Process!]!
-    # Find process according to given ID. Return null if not existing.
-    getProcess(processId: ID!): Process
-    # Get the number of matched processes through serviceId, labels
-    # Labels: the matched process should contain all labels
-    #
-    # The return is not a precise number, the process has its lifecycle, as it reboots and shutdowns with time.
-    # The return number just gives an abstract of the scale of profiling that would be applied.
-    estimateProcessScale(serviceId: ID!, labels: [String!]!): Long!
-    
-    getTimeInfo: TimeInfo
-    # Get the TTL info of records
-    getRecordsTTL: RecordsTTL
-    # Get the TTL info of metrics
-    getMetricsTTL: MetricsTTL
+  # Read service instance list.
+  listInstances(duration: Duration!, serviceId: ID!): [ServiceInstance!]!
+  listInstancesByName(duration: Duration!, service: ServiceCondition!): [ServiceInstance!]!
+  # Search and find service instance according to given ID. Return null if not existing.
+  getInstance(instanceId: String!): ServiceInstance
+
+  # Search and find matched endpoints according to given service and keyword(optional)
+  # If no keyword, randomly choose endpoint based on `limit` value.
+  # If duration is nil mean get all endpoints, otherwise, get the endpoint list in the given duration.
+  findEndpoint(keyword: String, serviceId: ID!, limit: Int!, duration: Duration): [Endpoint!]!
+  findEndpointByName(keyword: String, service: ServiceCondition!, limit: Int!, duration: Duration): [Endpoint!]!
+  getEndpointInfo(endpointId: ID!): EndpointInfo
+
+  # Read process list.
+  listProcesses(duration: Duration!, instanceId: ID!): [Process!]!
+  # Find process according to given ID. Return null if not existing.
+  getProcess(processId: ID!): Process
+  # Get the number of matched processes through serviceId, labels
+  # Labels: the matched process should contain all labels
+  #
+  # The return is not a precise number, the process has its lifecycle, as it reboots and shutdowns with time.
+  # The return number just gives an abstract of the scale of profiling that would be applied.
+  estimateProcessScale(serviceId: ID!, labels: [String!]!): Long!
+
+  getTimeInfo: TimeInfo
+  # Get the TTL info of records
+  getRecordsTTL: RecordsTTL
+  # Get the TTL info of metrics
+  getMetricsTTL: MetricsTTL
 }
 
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -198,29 +198,29 @@ extend type Query {
 scalar Long
 
 schema {
-    query: Query
-    mutation: Mutation
+  query: Query
+  mutation: Mutation
 }
 
 #Root node
 type Query {
-    version: String
+  version: String
 }
 
 type Mutation {
-    version: String
+  version: String
 }
 
 # String key, String value pair.
 type KeyValue {
-    key: String!
-    value: String
+  key: String!
+  value: String
 }
 
 # String key, Long/Int value pair.
 type KeyNumericValue {
-    key: String!
-    value: Long!
+  key: String!
+  value: Long!
 }
 
 # The Duration defines the start and end time for each query operation.
@@ -242,125 +242,345 @@ type KeyNumericValue {
 #       2017-11-08 9:00 -> 2017-11-08 19:00
 #       there are 11 time points (hours) in the time span.
 input Duration {
-    start: String!
-    end: String!
-    step: Step!
-    # Only for BanyanDB, the flag to query from cold stage, default is false.
-    coldStage: Boolean
+  start: String!
+  end: String!
+  step: Step!
+  # Only for BanyanDB, the flag to query from cold stage, default is false.
+  coldStage: Boolean
 }
 
 enum Step {
-    DAY
-    HOUR
-    MINUTE
-    SECOND
+  DAY
+  HOUR
+  MINUTE
+  SECOND
 }
 
 enum Order {
-    ASC
-    DES
+  ASC
+  DES
 }
 
 input Pagination {
-    # pageNum starts in 1, the default is 1.
-    pageNum: Int
-    pageSize: Int!
-    # total is not provided since 9.1.0
-    # The client side determines the existing of the next page, which should be TRUE when `size of response list` == `pageSize'
+  # pageNum starts in 1, the default is 1.
+  pageNum: Int
+  pageSize: Int!
+  # total is not provided since 9.1.0
+  # The client side determines the existing of the next page, which should be TRUE when `size of response list` == `pageSize'
 }
 
 enum Language {
-    # For not language based agent, the language is impossible to tell.
-    UNKNOWN
-    JAVA
-    DOTNET
-    NODEJS
-    PYTHON
-    RUBY
-    GO
-    LUA
-    PHP
+  # For not language based agent, the language is impossible to tell.
+  UNKNOWN
+  JAVA
+  DOTNET
+  NODEJS
+  PYTHON
+  RUBY
+  GO
+  LUA
+  PHP
 }
 
 enum Scope {
-    All
-    Service
-    ServiceInstance
-    Endpoint
-    Process
-    ServiceRelation
-    ServiceInstanceRelation
-    EndpointRelation
-    ProcessRelation
+  All
+  Service
+  ServiceInstance
+  Endpoint
+  Process
+  ServiceRelation
+  ServiceInstanceRelation
+  EndpointRelation
+  ProcessRelation
 }
 
 enum DetectPoint {
-    CLIENT
-    SERVER
-    PROXY
+  CLIENT
+  SERVER
+  PROXY
 }
 
 type HealthStatus {
-    # 0 means healthy, more than 0 means unhealthy
-    # and less than 0 means oap doesn't startup.
-    score: Int!
-    # some details about the score value.
-    details: String
+  # 0 means healthy, more than 0 means unhealthy
+  # and less than 0 means oap doesn't startup.
+  score: Int!
+  # some details about the score value.
+  details: String
 }
 
 # The Span for OAP internal debugging.
 # All time is in nanoseconds.
 type DebuggingSpan {
-    spanId: Int!
-    parentSpanId: Int!
-    operation: String!
-    startTime: Long!
-    endTime: Long!
-    duration: Long!
-    msg: String
-    error: String
+  spanId: Int!
+  parentSpanId: Int!
+  operation: String!
+  startTime: Long!
+  endTime: Long!
+  duration: Long!
+  msg: String
+  error: String
 }
 
 # The Trace for OAP internal debugging.
 type DebuggingTrace {
-    traceId: String!
-    condition: String!
-    startTime: Long!
-    endTime: Long!
-    duration: Long!
-    spans: [DebuggingSpan!]!
+  traceId: String!
+  condition: String!
+  startTime: Long!
+  endTime: Long!
+  duration: Long!
+  spans: [DebuggingSpan!]!
 }
 
 # The condition used for instead of serviceId in query.
 # If you have service name, you don't need to provide serviceId.
 input ServiceCondition {
-    serviceName: String!
-    # If the service is virtual then required, such the `layer` is `UNDEFINED/VIRTUAL_DATABASE/VIRTUAL_MQ/VIRTUAL_GATEWAY`.
-    # Otherwise, it is not required.
-    layer: String
+  serviceName: String!
+  # If the service is virtual then required, such the `layer` is `UNDEFINED/VIRTUAL_DATABASE/VIRTUAL_MQ/VIRTUAL_GATEWAY`.
+  # Otherwise, it is not required.
+  layer: String
 }
 
 # The condition used for instead of serviceInstanceId in query.
 # If you have service name and instance name, you don't need to provide serviceInstanceId.
 input InstanceCondition {
-    serviceName: String!
-    instanceName: String!
-    # If the service is virtual then required, such the `layer` is `UNDEFINED/VIRTUAL_DATABASE/VIRTUAL_MQ/VIRTUAL_GATEWAY`.
-    # Otherwise, it is not required.
-    layer: String
+  serviceName: String!
+  instanceName: String!
+  # If the service is virtual then required, such the `layer` is `UNDEFINED/VIRTUAL_DATABASE/VIRTUAL_MQ/VIRTUAL_GATEWAY`.
+  # Otherwise, it is not required.
+  layer: String
 }
 
 # The condition used for instead of endpointId in query.
 # If you have service name and endpoint name, you don't need to provide endpointId.
 input EndpointCondition {
-    serviceName: String!
-    endpointName: String!
-    # If the service is virtual then required, such the `layer` is `UNDEFINED/VIRTUAL_DATABASE/VIRTUAL_MQ/VIRTUAL_GATEWAY`.
-    # Otherwise, it is not required.
-    layer: String
+  serviceName: String!
+  endpointName: String!
+  # If the service is virtual then required, such the `layer` is `UNDEFINED/VIRTUAL_DATABASE/VIRTUAL_MQ/VIRTUAL_GATEWAY`.
+  # Otherwise, it is not required.
+  layer: String
 }
 
 extend type Query {
-    # Query Health Checker module for the status of OAP server
-    checkHealth: HealthStatus!
+  # Query Health Checker module for the status of OAP server
+  checkHealth: HealthStatus!
+}
+
+# The list of traces
+type TraceBrief {
+  traces: [BasicTrace!]!
+  #For OAP internal query debugging
+  debuggingTrace: DebuggingTrace
+}
+
+# Trace basic info
+type BasicTrace {
+  segmentId: String!
+  endpointNames: [String!]!
+  duration: Int!
+  start: String!
+  isError: Boolean
+  traceIds: [String!]!
+}
+
+# Represent the conditions used for query TraceBrief
+input TraceQueryCondition {
+  # The value of 0 means all services.
+  serviceId: ID
+  serviceInstanceId: ID
+  traceId: String
+  endpointId: ID
+  # The time range of traces started
+  queryDuration: Duration
+  # The min time of trace
+  minTraceDuration: Int
+  # The max time of trace
+  maxTraceDuration: Int
+  traceState: TraceState!
+  queryOrder: QueryOrder!
+  # Map to the tags included in the traces
+  tags: [SpanTag!]
+  paging: Pagination!
+}
+
+# Use service, instance and endpoint name as the condition
+input TraceQueryConditionByName {
+  # The value of 0 means all services.
+  service: ServiceCondition
+  instance: InstanceCondition
+  endpoint: EndpointCondition
+  traceId: String
+  # The time range of traces started
+  queryDuration: Duration
+  # The min time of trace
+  minTraceDuration: Int
+  # The max time of trace
+  maxTraceDuration: Int
+  traceState: TraceState!
+  queryOrder: QueryOrder!
+  # Map to the tags included in the traces
+  tags: [SpanTag!]
+  paging: Pagination!
+}
+
+input SpanTag {
+  key: String!
+  value: String
+}
+
+enum TraceState {
+  ALL
+  SUCCESS
+  ERROR
+}
+
+enum QueryOrder {
+  BY_START_TIME
+  BY_DURATION
+}
+
+# The trace represents a distributed trace, includes all segments and spans.
+type Trace {
+  spans: [Span!]!
+  #For OAP internal query debugging
+  debuggingTrace: DebuggingTrace
+}
+
+type Span {
+  traceId: ID!
+  segmentId: ID!
+  spanId: Int!
+  parentSpanId: Int!
+  refs: [Ref!]!
+  serviceCode: String!
+  serviceInstanceName: ID!
+  # The start timestamp of the span in millisecond
+  startTime: Long!
+  # The end timestamp of the span in millisecond
+  endTime: Long!
+  endpointName: String
+  # There are three span types: Local, Entry and Exit
+  type: String!
+  # Peer network id, e.g. host+port, ip+port
+  peer: String
+  # The name of the tech stack component used for the execution represented by the span.
+  component: String
+  # The error status is true when the execution returns error code or throws an exception(determined by the language).
+  isError: Boolean
+  # There are 5 layers: Unknown, Database, RPCFramework, Http, MQ and Cache
+  layer: String
+  # key-value(string) pairs to specify unique attributes of ths span
+  tags: [KeyValue!]!
+  # The events happen of the span, especially in-process.
+  logs: [LogEntity!]!
+  # The attached events happen in the span's context but out-of-process.
+  # Check SpanAttachedEvent definition for more details.
+  attachedEvents: [SpanAttachedEvent!]!
+}
+
+# Ref represents the link between the segment and its parents.
+# The parent(ref) may not exists, which means batch process.
+# The UI should display a list, representing the other trace IDs.
+type Ref {
+  traceId: ID!
+  parentSegmentId: ID!
+  parentSpanId: Int!
+  # Ref type represents why did the ref happen.
+  # Include: 1) CrossProcess 2) CrossThread
+  type: RefType!
+}
+
+enum RefType {
+  CROSS_PROCESS
+  CROSS_THREAD
+}
+
+type LogEntity {
+  # The timestamp of the log in millisecond
+  time: Long!
+  data: [KeyValue!]
+}
+
+# An instantaneous point on the time-line.
+# An instant represents a data point accurate to the nanosecond.
+# It is constituted by a long representing epoch-seconds and an int representing nanosecond-of-second,
+# which will always be between 0 and 999,999,999
+type Instant {
+  # The number of seconds from the epoch of 1970-01-01T00:00:00Z.
+  seconds: Long!
+  # The number of nanoseconds, later along the time-line, from the seconds field.
+  # This is always positive, and never exceeds 999,999,999.
+  nanos: Int!
+}
+
+# SpanAttachedEvent represents an attached event for a traced RPC.
+# When an RPC is being traced by the in-process language agent, a span would be reported by the client-side agent.
+# And the rover would be aware of this RPC due to the existing tracing header.
+# Then, the rover agent collects extra information from the OS level to provide assistance information to diagnose network performance.
+#
+# Notice, THIS IS ALSO AVAILABLE FOR ZIPKIN SPAN.
+# -----------------------------------------------
+# In SkyWalking, ZipkinQueryHandler provides full support for all Zipkin span queries.
+# SpanAttachedEvent query is supported through the trace query URI: /api/v2/trace/{traceId}
+# A new `attachedEvents` field would be added in JSONArray format with SpanAttachedEvent in JSON as elements.
+type SpanAttachedEvent {
+  # The nanosecond timestamp of the event's start time.
+  # Notice, most unit of timestamp in SkyWalking is milliseconds, but NANO-SECOND is required here.
+  # Because the attached event happens in the OS syscall level, most of them are executed rapidly.
+  startTime: Instant!
+  # The official event name.
+  # For example, the event name is a method signature from syscall stack.
+  event: String!
+  # [Optional] The nanosecond timestamp of the event's end time.
+  endTime: Instant!
+  # The tags for this event includes some extra OS level information,
+  # such as
+  # 1. net_device used for this exit span.
+  # 2. network L7 protocol
+  tags: [KeyValue]!
+  # The summary of statistics during this event.
+  # Each statistic provides a name(metric name) to represent the name, and an int64/long as the value.
+  summary: [KeyNumericValue!]!
+}
+
+# Param, if debug is true will enable the query tracing and return DebuggingTrace in the result.
+extend type Query {
+  # Search segment list with given conditions
+  queryBasicTraces(condition: TraceQueryCondition, debug: Boolean): TraceBrief
+  queryBasicTracesByName(condition: TraceQueryConditionByName, debug: Boolean): TraceBrief
+  # Read the specific trace ID with given trace ID
+  # duration is optional, and only for BanyanDB. If not provided, means search in the last 1 day.
+  queryTrace(traceId: ID!, duration: Duration, debug: Boolean): Trace
+  # Read the list of searchable keys
+  queryTraceTagAutocompleteKeys(duration: Duration!): [String!]
+  # Search the available value options of the given key.
+  queryTraceTagAutocompleteValues(tagKey: String!, duration: Duration!): [String!]
+}
+
+type TraceList {
+  traces: [TraceV2!]!
+  # The time range of the traces actually retrieved.
+  # If the queryDuration is not given, the time range is the timestamp(ms) from now - 1day to now.
+  retrievedTimeRange: RetrievedTimeRange!
+  # For OAP internal query debugging
+  debuggingTrace: DebuggingTrace
+}
+
+type TraceV2 {
+  spans: [Span!]!
+}
+
+type RetrievedTimeRange {
+  # The start time (ms) of the traces actually retrieved.
+  startTime: Long!
+  # The end time (ms) of the traces actually retrieved.
+  endTime: Long!
+}
+
+# Param, if debug is true will enable the query tracing and return DebuggingTrace in the result.
+extend type Query {
+  queryTraces(condition: TraceQueryCondition, debug: Boolean): TraceList
+  # Feature detection endpoint: returns true if the backend supports the Query Traces V2 API.
+  # Returns false if the backend does not support Query Traces V2.
+  # This field is intended to assist clients in migrating to the new API.
+  hasQueryTracesV2Support: Boolean!
 }

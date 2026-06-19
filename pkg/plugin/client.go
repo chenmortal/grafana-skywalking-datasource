@@ -13,17 +13,24 @@ import (
 type SkywalkingClient struct {
 	logger        log.Logger
 	graphqlClient graphql.Client
-	settings      backend.DataSourceInstanceSettings
 }
 
-func New(hc *http.Client, logger log.Logger, settings backend.DataSourceInstanceSettings) (SkywalkingClient, error) {
+func New(hc *http.Client, logger log.Logger, endpoint string) (SkywalkingClient, error) {
 	//  settings.URL
-	graphqlClient := graphql.NewClient(settings.URL, hc)
+	graphqlClient := graphql.NewClient(endpoint, hc)
 	return SkywalkingClient{
 		logger:        logger,
 		graphqlClient: graphqlClient,
-		settings:      settings,
 	}, nil
+}
+
+func (s SkywalkingClient) Search(ctx context.Context, condition TraceQueryCondition, timeRange backend.TimeRange) (*queryV2TracesResponse, error) {
+	condition.QueryDuration = convertToDuration(timeRange.From, timeRange.To)
+	resp, err := queryV2Traces(ctx, s.graphqlClient, condition)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
 
 func (s SkywalkingClient) ListLayer(ctx context.Context) (*listLayerResponse, error) {
@@ -33,6 +40,7 @@ func (s SkywalkingClient) ListLayer(ctx context.Context) (*listLayerResponse, er
 	}
 	return resp, nil
 }
+
 func (s SkywalkingClient) QueryServices(ctx context.Context, layer string) (*queryServicesResponse, error) {
 	resp, err := queryServices(ctx, s.graphqlClient, layer)
 	if err != nil {
@@ -40,14 +48,9 @@ func (s SkywalkingClient) QueryServices(ctx context.Context, layer string) (*que
 	}
 	return resp, nil
 }
+
 func (s SkywalkingClient) QueryEndpoints(ctx context.Context, serviceId, keyword string, fromTime, toTime time.Time, limit int) (*queryEndpointsResponse, error) {
-	step := calculateStep(fromTime, toTime)
-	duration := Duration{
-		Start:     formatTimeToString(fromTime, step),
-		End:       formatTimeToString(toTime, step),
-		Step:      step,
-		ColdStage: false,
-	}
+	duration := convertToDuration(fromTime, toTime)
 	resp, err := queryEndpoints(ctx, s.graphqlClient, serviceId, keyword, duration, limit)
 	if err != nil {
 		return nil, err
@@ -56,6 +59,15 @@ func (s SkywalkingClient) QueryEndpoints(ctx context.Context, serviceId, keyword
 }
 
 func (s SkywalkingClient) QueryInstances(ctx context.Context, serviceId string, fromTime, toTime time.Time) (*queryInstancesResponse, error) {
+	duration := convertToDuration(fromTime, toTime)
+	resp, err := queryInstances(ctx, s.graphqlClient, serviceId, duration)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func convertToDuration(fromTime, toTime time.Time) Duration {
 	step := calculateStep(fromTime, toTime)
 	duration := Duration{
 		Start:     formatTimeToString(fromTime, step),
@@ -63,11 +75,7 @@ func (s SkywalkingClient) QueryInstances(ctx context.Context, serviceId string, 
 		Step:      step,
 		ColdStage: false,
 	}
-	resp, err := queryInstances(ctx, s.graphqlClient, serviceId, duration)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
+	return duration
 }
 
 func formatTimeToString(t time.Time, step Step) string {
