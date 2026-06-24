@@ -10,3 +10,4 @@ package: plugin
 bindings:
   Long:
     type: int64
+optional: pointer 

@@ -32,3 +32,16 @@ query queryInstances($serviceId: ID!, $duration: Duration!) {
     }
   }
 }
+query queryInstancesByName($service: ServiceCondition!, $duration: Duration!) {
+  pods: listInstancesByName(duration: $duration, service: $service) {
+    id
+    value: name
+    label: name
+    language
+    instanceUUID
+    attributes {
+      name
+      value
+    }
+  }
+}

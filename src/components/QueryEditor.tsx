@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 import React from 'react';
-import { InlineField, InlineFieldRow, QueryField, RadioButtonGroup, Stack, useStyles2 } from '@grafana/ui';
+import { InlineField, InlineFieldRow, Input, RadioButtonGroup, Stack, useStyles2 } from '@grafana/ui';
 import { QueryEditorProps } from '@grafana/data';
 import { SkywalkingDataSource } from '../datasource';
 import { MyDataSourceOptions, SkywalkingQuery, SkywalkingQueryType } from '../types';
@@ -24,12 +24,16 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
         return (
           <InlineFieldRow>
             <InlineField label="Trace ID" labelWidth={14} grow>
-              <QueryField
-                query={query.query}
-                onChange={onChangeQuery}
-                onRunQuery={onRunQuery}
-                placeholder={'Enter a Trace ID (run with Shift+Enter)'}
-                portalOrigin="jaeger"
+              <Input
+                value={query.query || ''}
+                onChange={(e) => onChangeQuery(e.currentTarget.value)}
+                placeholder="Enter a Trace ID"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.shiftKey) {
+                    e.preventDefault();
+                    onRunQuery();
+                  }
+                }}
               />
             </InlineField>
           </InlineFieldRow>

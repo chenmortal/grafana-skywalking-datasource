@@ -3,6 +3,7 @@ package plugin
 import (
 	"context"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/Khan/genqlient/graphql"
@@ -24,9 +25,26 @@ func New(hc *http.Client, logger log.Logger, endpoint string) (SkywalkingClient,
 	}, nil
 }
 
+var VIRTUAL_LAYER = []string{"UNDEFINED", "VIRTUAL_DATABASE", "VIRTUAL_MQ", "VIRTUAL_GATEWAY"}
+
 func (s SkywalkingClient) Search(ctx context.Context, condition TraceQueryCondition, timeRange backend.TimeRange) (*queryV2TracesResponse, error) {
-	condition.QueryDuration = convertToDuration(timeRange.From, timeRange.To)
-	resp, err := queryV2Traces(ctx, s.graphqlClient, condition)
+	duration := convertToDuration(timeRange.From, timeRange.To)
+	condition.QueryDuration = &duration
+	resp, err := queryV2Traces(ctx, s.graphqlClient, &condition)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+func (s SkywalkingClient) Trace(ctx context.Context, traceId string, timeRange backend.TimeRange) (*queryV2TracesResponse, error) {
+	duration := convertToDuration(timeRange.From, timeRange.To)
+	condition := TraceQueryCondition{
+		TraceId:       &traceId,
+		TraceState:    TraceStateAll,
+		QueryDuration: &duration,
+		QueryOrder:    QueryOrderByStartTime,
+	}
+	resp, err := queryV2Traces(ctx, s.graphqlClient, &condition)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +69,7 @@ func (s SkywalkingClient) QueryServices(ctx context.Context, layer string) (*que
 
 func (s SkywalkingClient) QueryEndpoints(ctx context.Context, serviceId, keyword string, fromTime, toTime time.Time, limit int) (*queryEndpointsResponse, error) {
 	duration := convertToDuration(fromTime, toTime)
-	resp, err := queryEndpoints(ctx, s.graphqlClient, serviceId, keyword, duration, limit)
+	resp, err := queryEndpoints(ctx, s.graphqlClient, serviceId, keyword, &duration, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -67,13 +85,27 @@ func (s SkywalkingClient) QueryInstances(ctx context.Context, serviceId string, 
 	return resp, nil
 }
 
+func (s SkywalkingClient) QueryInstancesByName(ctx context.Context, serviceName string, layer *string, fromTime, toTime time.Time) (*queryInstancesByNameResponse, error) {
+	service := ServiceCondition{
+		ServiceName: serviceName,
+	}
+	if layer != nil && slices.Contains(VIRTUAL_LAYER, *layer) {
+		service.Layer = layer
+	}
+	duration := convertToDuration(fromTime, toTime)
+	resp, err := queryInstancesByName(ctx, s.graphqlClient, service, duration)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func convertToDuration(fromTime, toTime time.Time) Duration {
 	step := calculateStep(fromTime, toTime)
 	duration := Duration{
-		Start:     formatTimeToString(fromTime, step),
-		End:       formatTimeToString(toTime, step),
-		Step:      step,
-		ColdStage: false,
+		Start: formatTimeToString(fromTime, step),
+		End:   formatTimeToString(toTime, step),
+		Step:  step,
 	}
 	return duration
 }

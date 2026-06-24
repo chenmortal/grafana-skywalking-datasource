@@ -12,7 +12,7 @@ type Duration struct {
 	Start     string `json:"start"`
 	End       string `json:"end"`
 	Step      Step   `json:"step"`
-	ColdStage bool   `json:"coldStage"`
+	ColdStage *bool  `json:"coldStage"`
 }
 
 // GetStart returns Duration.Start, and is useful for accessing the field via an interface.
@@ -25,7 +25,7 @@ func (v *Duration) GetEnd() string { return v.End }
 func (v *Duration) GetStep() Step { return v.Step }
 
 // GetColdStage returns Duration.ColdStage, and is useful for accessing the field via an interface.
-func (v *Duration) GetColdStage() bool { return v.ColdStage }
+func (v *Duration) GetColdStage() *bool { return v.ColdStage }
 
 type Language string
 
@@ -54,12 +54,12 @@ var AllLanguage = []Language{
 }
 
 type Pagination struct {
-	PageNum  int `json:"pageNum"`
-	PageSize int `json:"pageSize"`
+	PageNum  *int `json:"pageNum"`
+	PageSize int  `json:"pageSize"`
 }
 
 // GetPageNum returns Pagination.PageNum, and is useful for accessing the field via an interface.
-func (v *Pagination) GetPageNum() int { return v.PageNum }
+func (v *Pagination) GetPageNum() *int { return v.PageNum }
 
 // GetPageSize returns Pagination.PageSize, and is useful for accessing the field via an interface.
 func (v *Pagination) GetPageSize() int { return v.PageSize }
@@ -88,16 +88,27 @@ var AllRefType = []RefType{
 	RefTypeCrossThread,
 }
 
+type ServiceCondition struct {
+	ServiceName string  `json:"serviceName"`
+	Layer       *string `json:"layer"`
+}
+
+// GetServiceName returns ServiceCondition.ServiceName, and is useful for accessing the field via an interface.
+func (v *ServiceCondition) GetServiceName() string { return v.ServiceName }
+
+// GetLayer returns ServiceCondition.Layer, and is useful for accessing the field via an interface.
+func (v *ServiceCondition) GetLayer() *string { return v.Layer }
+
 type SpanTag struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	Key   string  `json:"key"`
+	Value *string `json:"value"`
 }
 
 // GetKey returns SpanTag.Key, and is useful for accessing the field via an interface.
 func (v *SpanTag) GetKey() string { return v.Key }
 
 // GetValue returns SpanTag.Value, and is useful for accessing the field via an interface.
-func (v *SpanTag) GetValue() string { return v.Value }
+func (v *SpanTag) GetValue() *string { return v.Value }
 
 type Step string
 
@@ -116,13 +127,13 @@ var AllStep = []Step{
 }
 
 type TraceQueryCondition struct {
-	ServiceId         string     `json:"serviceId"`
-	ServiceInstanceId string     `json:"serviceInstanceId"`
-	TraceId           string     `json:"traceId"`
-	EndpointId        string     `json:"endpointId"`
-	QueryDuration     Duration   `json:"queryDuration"`
-	MinTraceDuration  int        `json:"minTraceDuration"`
-	MaxTraceDuration  int        `json:"maxTraceDuration"`
+	ServiceId         *string    `json:"serviceId"`
+	ServiceInstanceId *string    `json:"serviceInstanceId"`
+	TraceId           *string    `json:"traceId"`
+	EndpointId        *string    `json:"endpointId"`
+	QueryDuration     *Duration  `json:"queryDuration"`
+	MinTraceDuration  *int       `json:"minTraceDuration"`
+	MaxTraceDuration  *int       `json:"maxTraceDuration"`
 	TraceState        TraceState `json:"traceState"`
 	QueryOrder        QueryOrder `json:"queryOrder"`
 	Tags              []SpanTag  `json:"tags"`
@@ -130,25 +141,25 @@ type TraceQueryCondition struct {
 }
 
 // GetServiceId returns TraceQueryCondition.ServiceId, and is useful for accessing the field via an interface.
-func (v *TraceQueryCondition) GetServiceId() string { return v.ServiceId }
+func (v *TraceQueryCondition) GetServiceId() *string { return v.ServiceId }
 
 // GetServiceInstanceId returns TraceQueryCondition.ServiceInstanceId, and is useful for accessing the field via an interface.
-func (v *TraceQueryCondition) GetServiceInstanceId() string { return v.ServiceInstanceId }
+func (v *TraceQueryCondition) GetServiceInstanceId() *string { return v.ServiceInstanceId }
 
 // GetTraceId returns TraceQueryCondition.TraceId, and is useful for accessing the field via an interface.
-func (v *TraceQueryCondition) GetTraceId() string { return v.TraceId }
+func (v *TraceQueryCondition) GetTraceId() *string { return v.TraceId }
 
 // GetEndpointId returns TraceQueryCondition.EndpointId, and is useful for accessing the field via an interface.
-func (v *TraceQueryCondition) GetEndpointId() string { return v.EndpointId }
+func (v *TraceQueryCondition) GetEndpointId() *string { return v.EndpointId }
 
 // GetQueryDuration returns TraceQueryCondition.QueryDuration, and is useful for accessing the field via an interface.
-func (v *TraceQueryCondition) GetQueryDuration() Duration { return v.QueryDuration }
+func (v *TraceQueryCondition) GetQueryDuration() *Duration { return v.QueryDuration }
 
 // GetMinTraceDuration returns TraceQueryCondition.MinTraceDuration, and is useful for accessing the field via an interface.
-func (v *TraceQueryCondition) GetMinTraceDuration() int { return v.MinTraceDuration }
+func (v *TraceQueryCondition) GetMinTraceDuration() *int { return v.MinTraceDuration }
 
 // GetMaxTraceDuration returns TraceQueryCondition.MaxTraceDuration, and is useful for accessing the field via an interface.
-func (v *TraceQueryCondition) GetMaxTraceDuration() int { return v.MaxTraceDuration }
+func (v *TraceQueryCondition) GetMaxTraceDuration() *int { return v.MaxTraceDuration }
 
 // GetTraceState returns TraceQueryCondition.TraceState, and is useful for accessing the field via an interface.
 func (v *TraceQueryCondition) GetTraceState() TraceState { return v.TraceState }
@@ -178,10 +189,10 @@ var AllTraceState = []TraceState{
 
 // __queryEndpointsInput is used internally by genqlient
 type __queryEndpointsInput struct {
-	ServiceId string   `json:"serviceId"`
-	Keyword   string   `json:"keyword"`
-	Duration  Duration `json:"duration"`
-	Limit     int      `json:"limit"`
+	ServiceId string    `json:"serviceId"`
+	Keyword   string    `json:"keyword"`
+	Duration  *Duration `json:"duration"`
+	Limit     int       `json:"limit"`
 }
 
 // GetServiceId returns __queryEndpointsInput.ServiceId, and is useful for accessing the field via an interface.
@@ -191,10 +202,22 @@ func (v *__queryEndpointsInput) GetServiceId() string { return v.ServiceId }
 func (v *__queryEndpointsInput) GetKeyword() string { return v.Keyword }
 
 // GetDuration returns __queryEndpointsInput.Duration, and is useful for accessing the field via an interface.
-func (v *__queryEndpointsInput) GetDuration() Duration { return v.Duration }
+func (v *__queryEndpointsInput) GetDuration() *Duration { return v.Duration }
 
 // GetLimit returns __queryEndpointsInput.Limit, and is useful for accessing the field via an interface.
 func (v *__queryEndpointsInput) GetLimit() int { return v.Limit }
+
+// __queryInstancesByNameInput is used internally by genqlient
+type __queryInstancesByNameInput struct {
+	Service  ServiceCondition `json:"service"`
+	Duration Duration         `json:"duration"`
+}
+
+// GetService returns __queryInstancesByNameInput.Service, and is useful for accessing the field via an interface.
+func (v *__queryInstancesByNameInput) GetService() ServiceCondition { return v.Service }
+
+// GetDuration returns __queryInstancesByNameInput.Duration, and is useful for accessing the field via an interface.
+func (v *__queryInstancesByNameInput) GetDuration() Duration { return v.Duration }
 
 // __queryInstancesInput is used internally by genqlient
 type __queryInstancesInput struct {
@@ -218,11 +241,11 @@ func (v *__queryServicesInput) GetLayer() string { return v.Layer }
 
 // __queryV2TracesInput is used internally by genqlient
 type __queryV2TracesInput struct {
-	Condition TraceQueryCondition `json:"condition"`
+	Condition *TraceQueryCondition `json:"condition"`
 }
 
 // GetCondition returns __queryV2TracesInput.Condition, and is useful for accessing the field via an interface.
-func (v *__queryV2TracesInput) GetCondition() TraceQueryCondition { return v.Condition }
+func (v *__queryV2TracesInput) GetCondition() *TraceQueryCondition { return v.Condition }
 
 // listLayerResponse is returned by listLayer on success.
 type listLayerResponse struct {
@@ -255,6 +278,60 @@ type queryEndpointsResponse struct {
 
 // GetPods returns queryEndpointsResponse.Pods, and is useful for accessing the field via an interface.
 func (v *queryEndpointsResponse) GetPods() []queryEndpointsPodsEndpoint { return v.Pods }
+
+// queryInstancesByNamePodsServiceInstance includes the requested fields of the GraphQL type ServiceInstance.
+type queryInstancesByNamePodsServiceInstance struct {
+	Id           string                                                       `json:"id"`
+	Value        string                                                       `json:"value"`
+	Label        string                                                       `json:"label"`
+	Language     Language                                                     `json:"language"`
+	InstanceUUID string                                                       `json:"instanceUUID"`
+	Attributes   []queryInstancesByNamePodsServiceInstanceAttributesAttribute `json:"attributes"`
+}
+
+// GetId returns queryInstancesByNamePodsServiceInstance.Id, and is useful for accessing the field via an interface.
+func (v *queryInstancesByNamePodsServiceInstance) GetId() string { return v.Id }
+
+// GetValue returns queryInstancesByNamePodsServiceInstance.Value, and is useful for accessing the field via an interface.
+func (v *queryInstancesByNamePodsServiceInstance) GetValue() string { return v.Value }
+
+// GetLabel returns queryInstancesByNamePodsServiceInstance.Label, and is useful for accessing the field via an interface.
+func (v *queryInstancesByNamePodsServiceInstance) GetLabel() string { return v.Label }
+
+// GetLanguage returns queryInstancesByNamePodsServiceInstance.Language, and is useful for accessing the field via an interface.
+func (v *queryInstancesByNamePodsServiceInstance) GetLanguage() Language { return v.Language }
+
+// GetInstanceUUID returns queryInstancesByNamePodsServiceInstance.InstanceUUID, and is useful for accessing the field via an interface.
+func (v *queryInstancesByNamePodsServiceInstance) GetInstanceUUID() string { return v.InstanceUUID }
+
+// GetAttributes returns queryInstancesByNamePodsServiceInstance.Attributes, and is useful for accessing the field via an interface.
+func (v *queryInstancesByNamePodsServiceInstance) GetAttributes() []queryInstancesByNamePodsServiceInstanceAttributesAttribute {
+	return v.Attributes
+}
+
+// queryInstancesByNamePodsServiceInstanceAttributesAttribute includes the requested fields of the GraphQL type Attribute.
+type queryInstancesByNamePodsServiceInstanceAttributesAttribute struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+// GetName returns queryInstancesByNamePodsServiceInstanceAttributesAttribute.Name, and is useful for accessing the field via an interface.
+func (v *queryInstancesByNamePodsServiceInstanceAttributesAttribute) GetName() string { return v.Name }
+
+// GetValue returns queryInstancesByNamePodsServiceInstanceAttributesAttribute.Value, and is useful for accessing the field via an interface.
+func (v *queryInstancesByNamePodsServiceInstanceAttributesAttribute) GetValue() string {
+	return v.Value
+}
+
+// queryInstancesByNameResponse is returned by queryInstancesByName on success.
+type queryInstancesByNameResponse struct {
+	Pods []queryInstancesByNamePodsServiceInstance `json:"pods"`
+}
+
+// GetPods returns queryInstancesByNameResponse.Pods, and is useful for accessing the field via an interface.
+func (v *queryInstancesByNameResponse) GetPods() []queryInstancesByNamePodsServiceInstance {
+	return v.Pods
+}
 
 // queryInstancesPodsServiceInstance includes the requested fields of the GraphQL type ServiceInstance.
 type queryInstancesPodsServiceInstance struct {
@@ -321,7 +398,7 @@ type queryServicesServicesService struct {
 	Label     string   `json:"label"`
 	Group     string   `json:"group"`
 	Layers    []string `json:"layers"`
-	Normal    bool     `json:"normal"`
+	Normal    *bool    `json:"normal"`
 	ShortName string   `json:"shortName"`
 }
 
@@ -341,7 +418,7 @@ func (v *queryServicesServicesService) GetGroup() string { return v.Group }
 func (v *queryServicesServicesService) GetLayers() []string { return v.Layers }
 
 // GetNormal returns queryServicesServicesService.Normal, and is useful for accessing the field via an interface.
-func (v *queryServicesServicesService) GetNormal() bool { return v.Normal }
+func (v *queryServicesServicesService) GetNormal() *bool { return v.Normal }
 
 // GetShortName returns queryServicesServicesService.ShortName, and is useful for accessing the field via an interface.
 func (v *queryServicesServicesService) GetShortName() string { return v.ShortName }
@@ -397,12 +474,12 @@ type queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan struct {
 	ServiceInstanceName string                                                                                   `json:"serviceInstanceName"`
 	StartTime           int64                                                                                    `json:"startTime"`
 	EndTime             int64                                                                                    `json:"endTime"`
-	EndpointName        string                                                                                   `json:"endpointName"`
+	EndpointName        *string                                                                                  `json:"endpointName"`
 	Type                string                                                                                   `json:"type"`
-	Peer                string                                                                                   `json:"peer"`
-	Component           string                                                                                   `json:"component"`
-	IsError             bool                                                                                     `json:"isError"`
-	Layer               string                                                                                   `json:"layer"`
+	Peer                *string                                                                                  `json:"peer"`
+	Component           *string                                                                                  `json:"component"`
+	IsError             *bool                                                                                    `json:"isError"`
+	Layer               *string                                                                                  `json:"layer"`
 	Tags                []queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanTagsKeyValue                    `json:"tags"`
 	Logs                []queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanLogsLogEntity                   `json:"logs"`
 	AttachedEvents      []queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEvent `json:"attachedEvents"`
@@ -452,7 +529,7 @@ func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetEndTime() i
 }
 
 // GetEndpointName returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan.EndpointName, and is useful for accessing the field via an interface.
-func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetEndpointName() string {
+func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetEndpointName() *string {
 	return v.EndpointName
 }
 
@@ -460,18 +537,20 @@ func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetEndpointNam
 func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetType() string { return v.Type }
 
 // GetPeer returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan.Peer, and is useful for accessing the field via an interface.
-func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetPeer() string { return v.Peer }
+func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetPeer() *string { return v.Peer }
 
 // GetComponent returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan.Component, and is useful for accessing the field via an interface.
-func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetComponent() string {
+func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetComponent() *string {
 	return v.Component
 }
 
 // GetIsError returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan.IsError, and is useful for accessing the field via an interface.
-func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetIsError() bool { return v.IsError }
+func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetIsError() *bool {
+	return v.IsError
+}
 
 // GetLayer returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan.Layer, and is useful for accessing the field via an interface.
-func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetLayer() string { return v.Layer }
+func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetLayer() *string { return v.Layer }
 
 // GetTags returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan.Tags, and is useful for accessing the field via an interface.
 func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) GetTags() []queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanTagsKeyValue {
@@ -493,7 +572,7 @@ type queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAt
 	StartTime queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventStartTimeInstant         `json:"startTime"`
 	Event     string                                                                                                         `json:"event"`
 	EndTime   queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventEndTimeInstant           `json:"endTime"`
-	Tags      []queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventTagsKeyValue           `json:"tags"`
+	Tags      []*queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventTagsKeyValue          `json:"tags"`
 	Summary   []queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventSummaryKeyNumericValue `json:"summary"`
 }
 
@@ -513,7 +592,7 @@ func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSp
 }
 
 // GetTags returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEvent.Tags, and is useful for accessing the field via an interface.
-func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEvent) GetTags() []queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventTagsKeyValue {
+func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEvent) GetTags() []*queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventTagsKeyValue {
 	return v.Tags
 }
 
@@ -572,8 +651,8 @@ func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSp
 
 // queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventTagsKeyValue includes the requested fields of the GraphQL type KeyValue.
 type queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventTagsKeyValue struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	Key   string  `json:"key"`
+	Value *string `json:"value"`
 }
 
 // GetKey returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventTagsKeyValue.Key, and is useful for accessing the field via an interface.
@@ -582,7 +661,7 @@ func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSp
 }
 
 // GetValue returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventTagsKeyValue.Value, and is useful for accessing the field via an interface.
-func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventTagsKeyValue) GetValue() string {
+func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanAttachedEventsSpanAttachedEventTagsKeyValue) GetValue() *string {
 	return v.Value
 }
 
@@ -604,8 +683,8 @@ func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanLogsLogEntity) G
 
 // queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanLogsLogEntityDataKeyValue includes the requested fields of the GraphQL type KeyValue.
 type queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanLogsLogEntityDataKeyValue struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	Key   string  `json:"key"`
+	Value *string `json:"value"`
 }
 
 // GetKey returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanLogsLogEntityDataKeyValue.Key, and is useful for accessing the field via an interface.
@@ -614,7 +693,7 @@ func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanLogsLogEntityDat
 }
 
 // GetValue returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanLogsLogEntityDataKeyValue.Value, and is useful for accessing the field via an interface.
-func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanLogsLogEntityDataKeyValue) GetValue() string {
+func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanLogsLogEntityDataKeyValue) GetValue() *string {
 	return v.Value
 }
 
@@ -648,8 +727,8 @@ func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanRefsRef) GetType
 
 // queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanTagsKeyValue includes the requested fields of the GraphQL type KeyValue.
 type queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanTagsKeyValue struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	Key   string  `json:"key"`
+	Value *string `json:"value"`
 }
 
 // GetKey returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanTagsKeyValue.Key, and is useful for accessing the field via an interface.
@@ -658,17 +737,17 @@ func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanTagsKeyValue) Ge
 }
 
 // GetValue returns queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanTagsKeyValue.Value, and is useful for accessing the field via an interface.
-func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanTagsKeyValue) GetValue() string {
+func (v *queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpanTagsKeyValue) GetValue() *string {
 	return v.Value
 }
 
 // queryV2TracesResponse is returned by queryV2Traces on success.
 type queryV2TracesResponse struct {
-	QueryTraces queryV2TracesQueryTracesTraceList `json:"queryTraces"`
+	QueryTraces *queryV2TracesQueryTracesTraceList `json:"queryTraces"`
 }
 
 // GetQueryTraces returns queryV2TracesResponse.QueryTraces, and is useful for accessing the field via an interface.
-func (v *queryV2TracesResponse) GetQueryTraces() queryV2TracesQueryTracesTraceList {
+func (v *queryV2TracesResponse) GetQueryTraces() *queryV2TracesQueryTracesTraceList {
 	return v.QueryTraces
 }
 
@@ -716,7 +795,7 @@ func queryEndpoints(
 	client_ graphql.Client,
 	serviceId string,
 	keyword string,
-	duration Duration,
+	duration *Duration,
 	limit int,
 ) (data_ *queryEndpointsResponse, err_ error) {
 	req_ := &graphql.Request{
@@ -775,6 +854,50 @@ func queryInstances(
 	}
 
 	data_ = &queryInstancesResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by queryInstancesByName.
+const queryInstancesByName_Operation = `
+query queryInstancesByName ($service: ServiceCondition!, $duration: Duration!) {
+	pods: listInstancesByName(duration: $duration, service: $service) {
+		id
+		value: name
+		label: name
+		language
+		instanceUUID
+		attributes {
+			name
+			value
+		}
+	}
+}
+`
+
+func queryInstancesByName(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	service ServiceCondition,
+	duration Duration,
+) (data_ *queryInstancesByNameResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "queryInstancesByName",
+		Query:  queryInstancesByName_Operation,
+		Variables: &__queryInstancesByNameInput{
+			Service:  service,
+			Duration: duration,
+		},
+	}
+
+	data_ = &queryInstancesByNameResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(
@@ -895,7 +1018,7 @@ query queryV2Traces ($condition: TraceQueryCondition) {
 func queryV2Traces(
 	ctx_ context.Context,
 	client_ graphql.Client,
-	condition TraceQueryCondition,
+	condition *TraceQueryCondition,
 ) (data_ *queryV2TracesResponse, err_ error) {
 	req_ := &graphql.Request{
 		OpName: "queryV2Traces",

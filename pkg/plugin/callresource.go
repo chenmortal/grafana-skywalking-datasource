@@ -24,7 +24,7 @@ func (s *Service) registerResourceRoutes() *http.ServeMux {
 func getListLayerHandler(d *datasourceInfo) http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
 		layers, err := d.SkywalkingClient.ListLayer(r.Context())
-		writeResponse(layers, err, rw, d.SkywalkingClient.logger)
+		writeResponse(*layers, err, rw, d.SkywalkingClient.logger)
 	}
 }
 
@@ -52,7 +52,7 @@ func queryEndpointsHandler(d *datasourceInfo) http.HandlerFunc {
 			time.UnixMilli(req.FromTime),
 			time.UnixMilli(req.ToTime),
 			req.Limit)
-		writeResponse(endpoints, err, rw, d.SkywalkingClient.logger)
+		writeResponse(*endpoints, err, rw, d.SkywalkingClient.logger)
 	}
 }
 
