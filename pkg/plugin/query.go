@@ -137,6 +137,7 @@ func TransformTraceResponse(tracesResponse *queryV2TracesResponse, ctx context.C
 		data.NewField("startTime", nil, []int64{}),
 		data.NewField("duration", nil, []int64{}),
 		data.NewField("references", nil, []json.RawMessage{}),
+		data.NewField("tags", nil, []json.RawMessage{}),
 	)
 	frame.Meta = &data.FrameMeta{
 		PreferredVisualization: "trace",
@@ -174,54 +175,8 @@ func TransformTraceResponse(tracesResponse *queryV2TracesResponse, ctx context.C
 		// parse serviceName
 		serviceName := span.GetServiceCode()
 
-		// parse layer (保持指针类型，用于 QueryInstancesByName)
-		layer := span.GetLayer()
-
 		// parse serviceTag
-		var serviceTagList []KeyValueType
-		instanceName := span.GetServiceInstanceName()
-		if tagList, ok := instanceTagsCache[instanceName]; ok {
-			serviceTagList = tagList
-		} else {
-			if queryResp, err := dsInfo.SkywalkingClient.QueryInstancesByName(ctx, serviceName, layer, q.TimeRange.From, q.TimeRange.To); err == nil {
-				for _, pod := range queryResp.GetPods() {
-					var serviceListTmp = []KeyValueType{
-						{
-							Key:   "instance",
-							Type:  "string",
-							Value: instanceName,
-						},
-						{
-							Key:   "language",
-							Type:  "string",
-							Value: pod.GetLanguage(),
-						},
-						{
-							Key:   "instanceUUID",
-							Type:  "string",
-							Value: pod.GetInstanceUUID(),
-						},
-					}
-					for _, attr := range pod.Attributes {
-						serviceListTmp = append(serviceListTmp, KeyValueType{
-							Key:   attr.GetName(),
-							Type:  "string",
-							Value: attr.GetValue(),
-						})
-					}
-					instanceTagsCache[pod.GetValue()] = serviceListTmp
-					if pod.GetValue() == instanceName {
-						serviceTagList = serviceListTmp
-					}
-				}
-			}
-		}
-
-		serviceTags := json.RawMessage{}
-		serviceTagMarshal, err := json.Marshal(serviceTagList)
-		if err == nil {
-			serviceTags = json.RawMessage(serviceTagMarshal)
-		}
+		serviceTags := parseServiceTag(ctx, dsInfo, instanceTagsCache, q, span)
 
 		// parse startTime
 		startTime := span.GetStartTime()
@@ -249,6 +204,8 @@ func TransformTraceResponse(tracesResponse *queryV2TracesResponse, ctx context.C
 			references = json.RawMessage(refsMarshaled)
 		}
 
+		// parse tag
+		tags := parseTag(span)
 		frame.AppendRow(
 			span.GetTraceId(),
 			spanID,
@@ -259,6 +216,7 @@ func TransformTraceResponse(tracesResponse *queryV2TracesResponse, ctx context.C
 			startTime,
 			duration,
 			references,
+			tags,
 		)
 	}
 	return frame
@@ -268,6 +226,100 @@ func transformSpanID(segmentId string, spanId int) string {
 }
 func isRootSpan(spanId int) bool {
 	return spanId == -1
+}
+
+func parseTag(span queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) json.RawMessage {
+	var tagList = []KeyValueType{}
+	if span.GetPeer() != nil {
+		tagList = append(tagList, KeyValueType{
+			Key:   "peer",
+			Type:  "string",
+			Value: *span.GetPeer(),
+		})
+	}
+	if span.GetLayer() != nil {
+		tagList = append(tagList, KeyValueType{
+			Key:   "layer",
+			Type:  "string",
+			Value: *span.GetLayer(),
+		})
+	}
+	if span.GetComponent() != nil {
+		tagList = append(tagList, KeyValueType{
+			Key:   "component",
+			Type:  "string",
+			Value: *span.GetComponent(),
+		})
+	}
+
+	// parse tags
+	for _, tag := range span.GetTags() {
+		tagList = append(tagList, KeyValueType{
+			Key:   tag.GetKey(),
+			Type:  "string",
+			Value: tag.GetValue(),
+		})
+	}
+	tags := json.RawMessage{}
+	tagMarshal, err := json.Marshal(tagList)
+	if err == nil {
+		tags = json.RawMessage(tagMarshal)
+	}
+	return tags
+}
+
+// parse serviceTag
+func parseServiceTag(ctx context.Context, dsInfo *datasourceInfo,
+	instanceTagsCache map[string][]KeyValueType, q backend.DataQuery,
+	span queryV2TracesQueryTracesTraceListTracesTraceV2SpansSpan) json.RawMessage {
+
+	layer := span.GetLayer()
+	serviceName := span.GetServiceCode()
+	var serviceTagList []KeyValueType
+	instanceName := span.GetServiceInstanceName()
+	if tagList, ok := instanceTagsCache[instanceName]; ok {
+		serviceTagList = tagList
+	} else {
+		if queryResp, err := dsInfo.SkywalkingClient.QueryInstancesByName(ctx, serviceName, layer, q.TimeRange.From, q.TimeRange.To); err == nil {
+			for _, pod := range queryResp.GetPods() {
+				var serviceListTmp = []KeyValueType{
+					{
+						Key:   "instance",
+						Type:  "string",
+						Value: instanceName,
+					},
+					{
+						Key:   "language",
+						Type:  "string",
+						Value: pod.GetLanguage(),
+					},
+					{
+						Key:   "instanceUUID",
+						Type:  "string",
+						Value: pod.GetInstanceUUID(),
+					},
+				}
+				for _, attr := range pod.Attributes {
+					serviceListTmp = append(serviceListTmp, KeyValueType{
+						Key:   attr.GetName(),
+						Type:  "string",
+						Value: attr.GetValue(),
+					})
+				}
+				instanceTagsCache[pod.GetValue()] = serviceListTmp
+				if pod.GetValue() == instanceName {
+					serviceTagList = serviceListTmp
+				}
+			}
+		}
+	}
+
+	serviceTags := json.RawMessage{}
+	serviceTagMarshal, err := json.Marshal(serviceTagList)
+	if err == nil {
+		serviceTags = json.RawMessage(serviceTagMarshal)
+	}
+	return serviceTags
 }
 
 type KeyValueType struct {
