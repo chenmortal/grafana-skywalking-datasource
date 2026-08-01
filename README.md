@@ -1,6 +1,6 @@
 # Skywalking Datasource for Grafana
 
-English | [简体中文](https://github.com/chenmortal/grafana-skywalking-datasource/blob/main/README_zh-Hans.md)
+English | [简体中文](https://github.com/chenmortal/grafana-skywalking-datasource/blob/master/README_zh-Hans.md)
 
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?logo=grafana&query=%24.version&url=https%3A%2F%2Fgrafana.com%2Fapi%2Fplugins%2Fchenmortal-skywalking-datasource&label=Marketplace&prefix=v&color=F47A20)
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?logo=grafana&query=%24.grafanaDependency&url=https%3A%2F%2Fgrafana.com%2Fapi%2Fplugins%2Fchenmortal-skywalking-datasource&label=Grafana&color=F47A20)
