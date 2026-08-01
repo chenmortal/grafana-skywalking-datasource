@@ -2,14 +2,10 @@ package plugin
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
-	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
 // Make sure Datasource implements required interfaces. This is important to do
@@ -63,35 +59,35 @@ func (d *Datasource) Dispose() {
 // 	return response, nil
 // }
 
-type queryModel struct{}
+// type queryModel struct{}
 
-func (d *Datasource) query(_ context.Context, pCtx backend.PluginContext, query backend.DataQuery) backend.DataResponse {
-	var response backend.DataResponse
+// func (d *Datasource) query(_ context.Context, pCtx backend.PluginContext, query backend.DataQuery) backend.DataResponse {
+// 	var response backend.DataResponse
 
-	// Unmarshal the JSON into our queryModel.
-	var qm queryModel
+// 	// Unmarshal the JSON into our queryModel.
+// 	var qm queryModel
 
-	err := json.Unmarshal(query.JSON, &qm)
-	if err != nil {
-		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("json unmarshal: %v", err.Error()))
-	}
+// 	err := json.Unmarshal(query.JSON, &qm)
+// 	if err != nil {
+// 		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("json unmarshal: %v", err.Error()))
+// 	}
 
-	// create data frame response.
-	// For an overview on data frames and how grafana handles them:
-	// https://grafana.com/developers/plugin-tools/introduction/data-frames
-	frame := data.NewFrame("response")
+// 	// create data frame response.
+// 	// For an overview on data frames and how grafana handles them:
+// 	// https://grafana.com/developers/plugin-tools/introduction/data-frames
+// 	frame := data.NewFrame("response")
 
-	// add fields.
-	frame.Fields = append(frame.Fields,
-		data.NewField("time", nil, []time.Time{query.TimeRange.From, query.TimeRange.To}),
-		data.NewField("values", nil, []int64{10, 20}),
-	)
+// 	// add fields.
+// 	frame.Fields = append(frame.Fields,
+// 		data.NewField("time", nil, []time.Time{query.TimeRange.From, query.TimeRange.To}),
+// 		data.NewField("values", nil, []int64{10, 20}),
+// 	)
 
-	// add the frames to the response.
-	response.Frames = append(response.Frames, frame)
+// 	// add the frames to the response.
+// 	response.Frames = append(response.Frames, frame)
 
-	return response
-}
+// 	return response
+// }
 
 // CheckHealth handles health checks sent from Grafana to the plugin.
 // The main use case for these health checks is the test button on the
