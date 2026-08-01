@@ -5,9 +5,10 @@
   "id": "chenmortal-skywalking-datasource",
   "metrics": true,
   "backend": true,
+  "tracing": true,
   "executable": "gpx_skywalking",
   "info": {
-    "description": "",
+    "description": "Chenmortal's Skywalking datasource plugin for Grafana",
     "author": {
       "name": "Chenmortal"
     },
@@ -17,12 +18,22 @@
       "large": "img/logo.svg"
     },
     "links": [],
-    "screenshots": [],
+    "screenshots": [
+      {
+        "name": "Search",
+        "path": "img/search.png"
+      },
+      {
+        "name": "Query",
+        "path": "img/query.png"
+      }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=12.3.0",
+    "grafanaDependency": ">=12.1.0",
     "plugins": []
-  }
+  },
+  "languages": ["en-US","zh-Hans"] 
 }

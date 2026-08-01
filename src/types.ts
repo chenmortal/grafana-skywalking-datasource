@@ -1,13 +1,24 @@
 import { DataSourceJsonData } from '@grafana/data';
 import { DataQuery } from '@grafana/schema';
+import { TraceQueryCondition } from 'type/operations';
 
-export interface MyQuery extends DataQuery {
-  queryText?: string;
-  constant: number;
+export interface SkywalkingQuery extends DataQuery {
+  layer?: string;
+  query: string;
+  condition: TraceQueryCondition;
+  endpointQueryText?: string;
+  queryType?: SkywalkingQueryType;
 }
 
-export const DEFAULT_QUERY: Partial<MyQuery> = {
-  constant: 6.5,
+export const DEFAULT_QUERY: Partial<SkywalkingQuery> = {
+  layer: 'GENERAL',
+  condition: {
+    paging: {
+      pageSize: 20,
+    },
+    queryOrder: 'BY_START_TIME',
+    traceState: 'ALL',
+  },
 };
 
 export interface DataPoint {
@@ -22,8 +33,9 @@ export interface DataSourceResponse {
 /**
  * These are options configured for each DataSource instance
  */
-export interface MyDataSourceOptions extends DataSourceJsonData {
+export interface SkywalkingDataSourceOptions extends DataSourceJsonData {
   path?: string;
+  interfacev2: boolean
 }
 
 /**
@@ -32,3 +44,6 @@ export interface MyDataSourceOptions extends DataSourceJsonData {
 export interface MySecureJsonData {
   apiKey?: string;
 }
+
+export type SkywalkingQueryType = 'search' | 'dependencyGraph';
+export const ALL_OPERATIONS_VALUE = '__ALL__';

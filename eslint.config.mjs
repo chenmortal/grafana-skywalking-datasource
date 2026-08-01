@@ -1,5 +1,6 @@
 import { defineConfig } from 'eslint/config';
 import baseConfig from './.config/eslint.config.mjs';
+// import grafanaI18nPlugin from '@grafana/eslint-plugin-i18n';
 
 export default defineConfig([
   {
@@ -33,7 +34,18 @@ export default defineConfig([
       'playwright/.auth/',
       '**/.idea',
       '**/.eslintcache',
+      'src/type/operations.ts',
     ],
   },
+  // {
+  //   name: 'grafana/i18n-rules',
+  //   plugins: { '@grafana/i18n': grafanaI18nPlugin },
+  //   rules: {
+  //     '@grafana/i18n/no-untranslated-strings': ['error', { calleesToIgnore: ['^css$', 'use[A-Z].*'] }],
+  //     '@grafana/i18n/no-translation-top-level': 'error',
+  //     '@grafana/i18n/t-plural-defaults': 'error',
+  //     '@grafana/i18n/trans-plural-defaults': 'error',
+  //   },
+  // },
   ...baseConfig,
 ]);

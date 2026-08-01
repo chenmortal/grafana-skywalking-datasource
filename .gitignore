@@ -44,5 +44,5 @@ ci/
 
 # Editor
 .idea
-
+.vscode
 .eslintcache

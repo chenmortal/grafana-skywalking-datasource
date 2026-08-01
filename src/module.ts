@@ -1,9 +1,14 @@
 import { DataSourcePlugin } from '@grafana/data';
-import { DataSource } from './datasource';
+import { SkywalkingDataSource } from './datasource';
 import { ConfigEditor } from './components/ConfigEditor';
 import { QueryEditor } from './components/QueryEditor';
-import { MyQuery, MyDataSourceOptions } from './types';
+import { SkywalkingQuery, SkywalkingDataSourceOptions } from './types';
+import { initPluginTranslations } from '@grafana/i18n';
+import pluginJson from 'plugin.json';
 
-export const plugin = new DataSourcePlugin<DataSource, MyQuery, MyDataSourceOptions>(DataSource)
+await initPluginTranslations(pluginJson.id);
+export const plugin = new DataSourcePlugin<SkywalkingDataSource, SkywalkingQuery, SkywalkingDataSourceOptions>(
+  SkywalkingDataSource
+)
   .setConfigEditor(ConfigEditor)
   .setQueryEditor(QueryEditor);

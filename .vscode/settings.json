@@ -1,0 +1,13 @@
+{
+  "[go]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "golang.go"
+  },
+  "go.goroot": "/Users/chenshiming/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.4.darwin-arm64",
+  "go.formatTool": "goimports",
+  "go.lintTool": "golangci-lint",
+  "go.lintOnSave": "package",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  }
+}
