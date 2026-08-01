@@ -70,8 +70,8 @@ func BenchmarkFormatTimeToString(b *testing.B) {
 	t := time.Date(2026, 6, 2, 2, 46, 30, 0, time.UTC)
 	steps := []Step{StepDay, StepHour, StepMinute}
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	
+	for i := 0; b.Loop(); i++ {
 		formatTimeToString(t, steps[i%len(steps)])
 	}
 }

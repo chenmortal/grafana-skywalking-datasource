@@ -239,6 +239,22 @@ type __queryServicesInput struct {
 // GetLayer returns __queryServicesInput.Layer, and is useful for accessing the field via an interface.
 func (v *__queryServicesInput) GetLayer() string { return v.Layer }
 
+// __querySpansInput is used internally by genqlient
+type __querySpansInput struct {
+	TraceId string `json:"traceId"`
+}
+
+// GetTraceId returns __querySpansInput.TraceId, and is useful for accessing the field via an interface.
+func (v *__querySpansInput) GetTraceId() string { return v.TraceId }
+
+// __queryTracesInput is used internally by genqlient
+type __queryTracesInput struct {
+	Condition *TraceQueryCondition `json:"condition"`
+}
+
+// GetCondition returns __queryTracesInput.Condition, and is useful for accessing the field via an interface.
+func (v *__queryTracesInput) GetCondition() *TraceQueryCondition { return v.Condition }
+
 // __queryV2TracesInput is used internally by genqlient
 type __queryV2TracesInput struct {
 	Condition *TraceQueryCondition `json:"condition"`
@@ -278,6 +294,16 @@ type queryEndpointsResponse struct {
 
 // GetPods returns queryEndpointsResponse.Pods, and is useful for accessing the field via an interface.
 func (v *queryEndpointsResponse) GetPods() []queryEndpointsPodsEndpoint { return v.Pods }
+
+// queryHasQueryTracesV2SupportResponse is returned by queryHasQueryTracesV2Support on success.
+type queryHasQueryTracesV2SupportResponse struct {
+	HasQueryTracesV2Support bool `json:"hasQueryTracesV2Support"`
+}
+
+// GetHasQueryTracesV2Support returns queryHasQueryTracesV2SupportResponse.HasQueryTracesV2Support, and is useful for accessing the field via an interface.
+func (v *queryHasQueryTracesV2SupportResponse) GetHasQueryTracesV2Support() bool {
+	return v.HasQueryTracesV2Support
+}
 
 // queryInstancesByNamePodsServiceInstance includes the requested fields of the GraphQL type ServiceInstance.
 type queryInstancesByNamePodsServiceInstance struct {
@@ -422,6 +448,302 @@ func (v *queryServicesServicesService) GetNormal() *bool { return v.Normal }
 
 // GetShortName returns queryServicesServicesService.ShortName, and is useful for accessing the field via an interface.
 func (v *queryServicesServicesService) GetShortName() string { return v.ShortName }
+
+// querySpansResponse is returned by querySpans on success.
+type querySpansResponse struct {
+	Trace *querySpansTrace `json:"trace"`
+}
+
+// GetTrace returns querySpansResponse.Trace, and is useful for accessing the field via an interface.
+func (v *querySpansResponse) GetTrace() *querySpansTrace { return v.Trace }
+
+// querySpansTrace includes the requested fields of the GraphQL type Trace.
+type querySpansTrace struct {
+	Spans []querySpansTraceSpansSpan `json:"spans"`
+}
+
+// GetSpans returns querySpansTrace.Spans, and is useful for accessing the field via an interface.
+func (v *querySpansTrace) GetSpans() []querySpansTraceSpansSpan { return v.Spans }
+
+// querySpansTraceSpansSpan includes the requested fields of the GraphQL type Span.
+type querySpansTraceSpansSpan struct {
+	TraceId             string                                                    `json:"traceId"`
+	SegmentId           string                                                    `json:"segmentId"`
+	SpanId              int                                                       `json:"spanId"`
+	ParentSpanId        int                                                       `json:"parentSpanId"`
+	Refs                []querySpansTraceSpansSpanRefsRef                         `json:"refs"`
+	ServiceCode         string                                                    `json:"serviceCode"`
+	ServiceInstanceName string                                                    `json:"serviceInstanceName"`
+	StartTime           int64                                                     `json:"startTime"`
+	EndTime             int64                                                     `json:"endTime"`
+	EndpointName        *string                                                   `json:"endpointName"`
+	Type                string                                                    `json:"type"`
+	Peer                *string                                                   `json:"peer"`
+	Component           *string                                                   `json:"component"`
+	IsError             *bool                                                     `json:"isError"`
+	Layer               *string                                                   `json:"layer"`
+	Tags                []querySpansTraceSpansSpanTagsKeyValue                    `json:"tags"`
+	Logs                []querySpansTraceSpansSpanLogsLogEntity                   `json:"logs"`
+	AttachedEvents      []querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent `json:"attachedEvents"`
+}
+
+// GetTraceId returns querySpansTraceSpansSpan.TraceId, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetTraceId() string { return v.TraceId }
+
+// GetSegmentId returns querySpansTraceSpansSpan.SegmentId, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetSegmentId() string { return v.SegmentId }
+
+// GetSpanId returns querySpansTraceSpansSpan.SpanId, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetSpanId() int { return v.SpanId }
+
+// GetParentSpanId returns querySpansTraceSpansSpan.ParentSpanId, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetParentSpanId() int { return v.ParentSpanId }
+
+// GetRefs returns querySpansTraceSpansSpan.Refs, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetRefs() []querySpansTraceSpansSpanRefsRef { return v.Refs }
+
+// GetServiceCode returns querySpansTraceSpansSpan.ServiceCode, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetServiceCode() string { return v.ServiceCode }
+
+// GetServiceInstanceName returns querySpansTraceSpansSpan.ServiceInstanceName, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetServiceInstanceName() string { return v.ServiceInstanceName }
+
+// GetStartTime returns querySpansTraceSpansSpan.StartTime, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetStartTime() int64 { return v.StartTime }
+
+// GetEndTime returns querySpansTraceSpansSpan.EndTime, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetEndTime() int64 { return v.EndTime }
+
+// GetEndpointName returns querySpansTraceSpansSpan.EndpointName, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetEndpointName() *string { return v.EndpointName }
+
+// GetType returns querySpansTraceSpansSpan.Type, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetType() string { return v.Type }
+
+// GetPeer returns querySpansTraceSpansSpan.Peer, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetPeer() *string { return v.Peer }
+
+// GetComponent returns querySpansTraceSpansSpan.Component, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetComponent() *string { return v.Component }
+
+// GetIsError returns querySpansTraceSpansSpan.IsError, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetIsError() *bool { return v.IsError }
+
+// GetLayer returns querySpansTraceSpansSpan.Layer, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetLayer() *string { return v.Layer }
+
+// GetTags returns querySpansTraceSpansSpan.Tags, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetTags() []querySpansTraceSpansSpanTagsKeyValue { return v.Tags }
+
+// GetLogs returns querySpansTraceSpansSpan.Logs, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetLogs() []querySpansTraceSpansSpanLogsLogEntity { return v.Logs }
+
+// GetAttachedEvents returns querySpansTraceSpansSpan.AttachedEvents, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpan) GetAttachedEvents() []querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent {
+	return v.AttachedEvents
+}
+
+// querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent includes the requested fields of the GraphQL type SpanAttachedEvent.
+type querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent struct {
+	StartTime querySpansTraceSpansSpanAttachedEventsSpanAttachedEventStartTimeInstant         `json:"startTime"`
+	Event     string                                                                          `json:"event"`
+	EndTime   querySpansTraceSpansSpanAttachedEventsSpanAttachedEventEndTimeInstant           `json:"endTime"`
+	Tags      []*querySpansTraceSpansSpanAttachedEventsSpanAttachedEventTagsKeyValue          `json:"tags"`
+	Summary   []querySpansTraceSpansSpanAttachedEventsSpanAttachedEventSummaryKeyNumericValue `json:"summary"`
+}
+
+// GetStartTime returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent.StartTime, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent) GetStartTime() querySpansTraceSpansSpanAttachedEventsSpanAttachedEventStartTimeInstant {
+	return v.StartTime
+}
+
+// GetEvent returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent.Event, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent) GetEvent() string { return v.Event }
+
+// GetEndTime returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent.EndTime, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent) GetEndTime() querySpansTraceSpansSpanAttachedEventsSpanAttachedEventEndTimeInstant {
+	return v.EndTime
+}
+
+// GetTags returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent.Tags, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent) GetTags() []*querySpansTraceSpansSpanAttachedEventsSpanAttachedEventTagsKeyValue {
+	return v.Tags
+}
+
+// GetSummary returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent.Summary, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEvent) GetSummary() []querySpansTraceSpansSpanAttachedEventsSpanAttachedEventSummaryKeyNumericValue {
+	return v.Summary
+}
+
+// querySpansTraceSpansSpanAttachedEventsSpanAttachedEventEndTimeInstant includes the requested fields of the GraphQL type Instant.
+type querySpansTraceSpansSpanAttachedEventsSpanAttachedEventEndTimeInstant struct {
+	Seconds int64 `json:"seconds"`
+	Nanos   int   `json:"nanos"`
+}
+
+// GetSeconds returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEventEndTimeInstant.Seconds, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEventEndTimeInstant) GetSeconds() int64 {
+	return v.Seconds
+}
+
+// GetNanos returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEventEndTimeInstant.Nanos, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEventEndTimeInstant) GetNanos() int {
+	return v.Nanos
+}
+
+// querySpansTraceSpansSpanAttachedEventsSpanAttachedEventStartTimeInstant includes the requested fields of the GraphQL type Instant.
+type querySpansTraceSpansSpanAttachedEventsSpanAttachedEventStartTimeInstant struct {
+	Seconds int64 `json:"seconds"`
+	Nanos   int   `json:"nanos"`
+}
+
+// GetSeconds returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEventStartTimeInstant.Seconds, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEventStartTimeInstant) GetSeconds() int64 {
+	return v.Seconds
+}
+
+// GetNanos returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEventStartTimeInstant.Nanos, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEventStartTimeInstant) GetNanos() int {
+	return v.Nanos
+}
+
+// querySpansTraceSpansSpanAttachedEventsSpanAttachedEventSummaryKeyNumericValue includes the requested fields of the GraphQL type KeyNumericValue.
+type querySpansTraceSpansSpanAttachedEventsSpanAttachedEventSummaryKeyNumericValue struct {
+	Key   string `json:"key"`
+	Value int64  `json:"value"`
+}
+
+// GetKey returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEventSummaryKeyNumericValue.Key, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEventSummaryKeyNumericValue) GetKey() string {
+	return v.Key
+}
+
+// GetValue returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEventSummaryKeyNumericValue.Value, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEventSummaryKeyNumericValue) GetValue() int64 {
+	return v.Value
+}
+
+// querySpansTraceSpansSpanAttachedEventsSpanAttachedEventTagsKeyValue includes the requested fields of the GraphQL type KeyValue.
+type querySpansTraceSpansSpanAttachedEventsSpanAttachedEventTagsKeyValue struct {
+	Key   string  `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEventTagsKeyValue.Key, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEventTagsKeyValue) GetKey() string {
+	return v.Key
+}
+
+// GetValue returns querySpansTraceSpansSpanAttachedEventsSpanAttachedEventTagsKeyValue.Value, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanAttachedEventsSpanAttachedEventTagsKeyValue) GetValue() *string {
+	return v.Value
+}
+
+// querySpansTraceSpansSpanLogsLogEntity includes the requested fields of the GraphQL type LogEntity.
+type querySpansTraceSpansSpanLogsLogEntity struct {
+	Time int64                                               `json:"time"`
+	Data []querySpansTraceSpansSpanLogsLogEntityDataKeyValue `json:"data"`
+}
+
+// GetTime returns querySpansTraceSpansSpanLogsLogEntity.Time, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanLogsLogEntity) GetTime() int64 { return v.Time }
+
+// GetData returns querySpansTraceSpansSpanLogsLogEntity.Data, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanLogsLogEntity) GetData() []querySpansTraceSpansSpanLogsLogEntityDataKeyValue {
+	return v.Data
+}
+
+// querySpansTraceSpansSpanLogsLogEntityDataKeyValue includes the requested fields of the GraphQL type KeyValue.
+type querySpansTraceSpansSpanLogsLogEntityDataKeyValue struct {
+	Key   string  `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns querySpansTraceSpansSpanLogsLogEntityDataKeyValue.Key, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanLogsLogEntityDataKeyValue) GetKey() string { return v.Key }
+
+// GetValue returns querySpansTraceSpansSpanLogsLogEntityDataKeyValue.Value, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanLogsLogEntityDataKeyValue) GetValue() *string { return v.Value }
+
+// querySpansTraceSpansSpanRefsRef includes the requested fields of the GraphQL type Ref.
+type querySpansTraceSpansSpanRefsRef struct {
+	TraceId         string  `json:"traceId"`
+	ParentSegmentId string  `json:"parentSegmentId"`
+	ParentSpanId    int     `json:"parentSpanId"`
+	Type            RefType `json:"type"`
+}
+
+// GetTraceId returns querySpansTraceSpansSpanRefsRef.TraceId, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanRefsRef) GetTraceId() string { return v.TraceId }
+
+// GetParentSegmentId returns querySpansTraceSpansSpanRefsRef.ParentSegmentId, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanRefsRef) GetParentSegmentId() string { return v.ParentSegmentId }
+
+// GetParentSpanId returns querySpansTraceSpansSpanRefsRef.ParentSpanId, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanRefsRef) GetParentSpanId() int { return v.ParentSpanId }
+
+// GetType returns querySpansTraceSpansSpanRefsRef.Type, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanRefsRef) GetType() RefType { return v.Type }
+
+// querySpansTraceSpansSpanTagsKeyValue includes the requested fields of the GraphQL type KeyValue.
+type querySpansTraceSpansSpanTagsKeyValue struct {
+	Key   string  `json:"key"`
+	Value *string `json:"value"`
+}
+
+// GetKey returns querySpansTraceSpansSpanTagsKeyValue.Key, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanTagsKeyValue) GetKey() string { return v.Key }
+
+// GetValue returns querySpansTraceSpansSpanTagsKeyValue.Value, and is useful for accessing the field via an interface.
+func (v *querySpansTraceSpansSpanTagsKeyValue) GetValue() *string { return v.Value }
+
+// queryTracesDataTraceBrief includes the requested fields of the GraphQL type TraceBrief.
+type queryTracesDataTraceBrief struct {
+	Traces []queryTracesDataTraceBriefTracesBasicTrace `json:"traces"`
+}
+
+// GetTraces returns queryTracesDataTraceBrief.Traces, and is useful for accessing the field via an interface.
+func (v *queryTracesDataTraceBrief) GetTraces() []queryTracesDataTraceBriefTracesBasicTrace {
+	return v.Traces
+}
+
+// queryTracesDataTraceBriefTracesBasicTrace includes the requested fields of the GraphQL type BasicTrace.
+type queryTracesDataTraceBriefTracesBasicTrace struct {
+	Key           string   `json:"key"`
+	EndpointNames []string `json:"endpointNames"`
+	Duration      int      `json:"duration"`
+	Start         string   `json:"start"`
+	IsError       *bool    `json:"isError"`
+	TraceIds      []string `json:"traceIds"`
+}
+
+// GetKey returns queryTracesDataTraceBriefTracesBasicTrace.Key, and is useful for accessing the field via an interface.
+func (v *queryTracesDataTraceBriefTracesBasicTrace) GetKey() string { return v.Key }
+
+// GetEndpointNames returns queryTracesDataTraceBriefTracesBasicTrace.EndpointNames, and is useful for accessing the field via an interface.
+func (v *queryTracesDataTraceBriefTracesBasicTrace) GetEndpointNames() []string {
+	return v.EndpointNames
+}
+
+// GetDuration returns queryTracesDataTraceBriefTracesBasicTrace.Duration, and is useful for accessing the field via an interface.
+func (v *queryTracesDataTraceBriefTracesBasicTrace) GetDuration() int { return v.Duration }
+
+// GetStart returns queryTracesDataTraceBriefTracesBasicTrace.Start, and is useful for accessing the field via an interface.
+func (v *queryTracesDataTraceBriefTracesBasicTrace) GetStart() string { return v.Start }
+
+// GetIsError returns queryTracesDataTraceBriefTracesBasicTrace.IsError, and is useful for accessing the field via an interface.
+func (v *queryTracesDataTraceBriefTracesBasicTrace) GetIsError() *bool { return v.IsError }
+
+// GetTraceIds returns queryTracesDataTraceBriefTracesBasicTrace.TraceIds, and is useful for accessing the field via an interface.
+func (v *queryTracesDataTraceBriefTracesBasicTrace) GetTraceIds() []string { return v.TraceIds }
+
+// queryTracesResponse is returned by queryTraces on success.
+type queryTracesResponse struct {
+	Data *queryTracesDataTraceBrief `json:"data"`
+}
+
+// GetData returns queryTracesResponse.Data, and is useful for accessing the field via an interface.
+func (v *queryTracesResponse) GetData() *queryTracesDataTraceBrief { return v.Data }
 
 // queryV2TracesQueryTracesTraceList includes the requested fields of the GraphQL type TraceList.
 type queryV2TracesQueryTracesTraceList struct {
@@ -821,6 +1143,34 @@ func queryEndpoints(
 	return data_, err_
 }
 
+// The query executed by queryHasQueryTracesV2Support.
+const queryHasQueryTracesV2Support_Operation = `
+query queryHasQueryTracesV2Support {
+	hasQueryTracesV2Support
+}
+`
+
+func queryHasQueryTracesV2Support(
+	ctx_ context.Context,
+	client_ graphql.Client,
+) (data_ *queryHasQueryTracesV2SupportResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "queryHasQueryTracesV2Support",
+		Query:  queryHasQueryTracesV2Support_Operation,
+	}
+
+	data_ = &queryHasQueryTracesV2SupportResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
 // The query executed by queryInstances.
 const queryInstances_Operation = `
 query queryInstances ($serviceId: ID!, $duration: Duration!) {
@@ -938,6 +1288,132 @@ func queryServices(
 	}
 
 	data_ = &queryServicesResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by querySpans.
+const querySpans_Operation = `
+query querySpans ($traceId: ID!) {
+	trace: queryTrace(traceId: $traceId) {
+		spans {
+			traceId
+			segmentId
+			spanId
+			parentSpanId
+			refs {
+				traceId
+				parentSegmentId
+				parentSpanId
+				type
+			}
+			serviceCode
+			serviceInstanceName
+			startTime
+			endTime
+			endpointName
+			type
+			peer
+			component
+			isError
+			layer
+			tags {
+				key
+				value
+			}
+			logs {
+				time
+				data {
+					key
+					value
+				}
+			}
+			attachedEvents {
+				startTime {
+					seconds
+					nanos
+				}
+				event
+				endTime {
+					seconds
+					nanos
+				}
+				tags {
+					key
+					value
+				}
+				summary {
+					key
+					value
+				}
+			}
+		}
+	}
+}
+`
+
+func querySpans(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	traceId string,
+) (data_ *querySpansResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "querySpans",
+		Query:  querySpans_Operation,
+		Variables: &__querySpansInput{
+			TraceId: traceId,
+		},
+	}
+
+	data_ = &querySpansResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by queryTraces.
+const queryTraces_Operation = `
+query queryTraces ($condition: TraceQueryCondition) {
+	data: queryBasicTraces(condition: $condition) {
+		traces {
+			key: segmentId
+			endpointNames
+			duration
+			start
+			isError
+			traceIds
+		}
+	}
+}
+`
+
+func queryTraces(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	condition *TraceQueryCondition,
+) (data_ *queryTracesResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "queryTraces",
+		Query:  queryTraces_Operation,
+		Variables: &__queryTracesInput{
+			Condition: condition,
+		},
+	}
+
+	data_ = &queryTracesResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

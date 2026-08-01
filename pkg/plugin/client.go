@@ -27,7 +27,7 @@ func New(hc *http.Client, logger log.Logger, endpoint string) (SkywalkingClient,
 
 var VIRTUAL_LAYER = []string{"UNDEFINED", "VIRTUAL_DATABASE", "VIRTUAL_MQ", "VIRTUAL_GATEWAY"}
 
-func (s SkywalkingClient) Search(ctx context.Context, condition TraceQueryCondition, timeRange backend.TimeRange) (*queryV2TracesResponse, error) {
+func (s SkywalkingClient) QueryV2Traces(ctx context.Context, condition TraceQueryCondition, timeRange backend.TimeRange) (*queryV2TracesResponse, error) {
 	duration := convertToDuration(timeRange.From, timeRange.To)
 	condition.QueryDuration = &duration
 	resp, err := queryV2Traces(ctx, s.graphqlClient, &condition)
@@ -36,7 +36,18 @@ func (s SkywalkingClient) Search(ctx context.Context, condition TraceQueryCondit
 	}
 	return resp, nil
 }
-func (s SkywalkingClient) Trace(ctx context.Context, traceId string, timeRange backend.TimeRange) (*queryV2TracesResponse, error) {
+
+func (s SkywalkingClient) QueryBasicTraces(ctx context.Context, condition TraceQueryCondition, timeRange backend.TimeRange) (*queryTracesResponse, error) {
+	duration := convertToDuration(timeRange.From, timeRange.To)
+	condition.QueryDuration = &duration
+	resp, err := queryTraces(ctx, s.graphqlClient, &condition)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (s SkywalkingClient) TraceV2(ctx context.Context, traceId string, timeRange backend.TimeRange) (*queryV2TracesResponse, error) {
 	duration := convertToDuration(timeRange.From, timeRange.To)
 	condition := TraceQueryCondition{
 		TraceId:       &traceId,
@@ -50,6 +61,13 @@ func (s SkywalkingClient) Trace(ctx context.Context, traceId string, timeRange b
 	}
 	return resp, nil
 }
+func (s SkywalkingClient) TraceV1(ctx context.Context, traceId string, timeRange backend.TimeRange) (*querySpansResponse, error) {
+	resp, err := querySpans(ctx, s.graphqlClient, traceId)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
 
 func (s SkywalkingClient) ListLayer(ctx context.Context) (*listLayerResponse, error) {
 	resp, err := listLayer(ctx, s.graphqlClient)
@@ -57,6 +75,14 @@ func (s SkywalkingClient) ListLayer(ctx context.Context) (*listLayerResponse, er
 		return nil, err
 	}
 	return resp, nil
+}
+func (s SkywalkingClient) QueryHasQueryTracesV2Support(ctx context.Context) (bool, error) {
+	resp, err := queryHasQueryTracesV2Support(ctx, s.graphqlClient)
+	if err != nil {
+		return false, err
+	}
+	return resp.GetHasQueryTracesV2Support(), nil
+
 }
 
 func (s SkywalkingClient) QueryServices(ctx context.Context, layer string) (*queryServicesResponse, error) {

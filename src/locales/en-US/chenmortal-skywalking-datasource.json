@@ -1,0 +1,39 @@
+{
+  "queryEditor": {
+    "queryType": {
+      "dependencyGraph": "Dependency Graph",
+      "label": "Query Type",
+      "search": "Search",
+      "traceID": "TraceID"
+    }
+  },
+  "searchForm": {
+    "endpoint": {
+      "label": "Endpoint"
+    },
+    "instance": {
+      "label": "Instance"
+    },
+    "layer": {
+      "label": "Layer"
+    },
+    "order": {
+      "label": "order",
+      "options": {
+        "newest": "newest",
+        "slowest": "slowest"
+      }
+    },
+    "service": {
+      "label": "Service"
+    },
+    "traceState": {
+      "label": "state",
+      "options": {
+        "all": "ALL",
+        "error": "ERROR",
+        "success": "SUCCESS"
+      }
+    }
+  }
+}

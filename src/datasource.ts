@@ -8,22 +8,22 @@ import {
   toDataFrame,
 } from '@grafana/data';
 import { DataSourceWithBackend, getTemplateSrv } from '@grafana/runtime';
-import { SkywalkingQuery, MyDataSourceOptions, DEFAULT_QUERY } from './types';
+import { SkywalkingQuery, SkywalkingDataSourceOptions, DEFAULT_QUERY, ALL_OPERATIONS_VALUE } from './types';
 import { ListLayerQuery, QueryEndpointsQuery, QueryInstancesQuery, QueryServicesQuery } from 'type/operations';
 import { getTimeRangeValues } from 'utils';
 import { map, Observable, of } from 'rxjs';
 
-export class SkywalkingDataSource extends DataSourceWithBackend<SkywalkingQuery, MyDataSourceOptions> {
-  constructor(instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>) {
+export class SkywalkingDataSource extends DataSourceWithBackend<SkywalkingQuery, SkywalkingDataSourceOptions> {
+  constructor(instanceSettings: DataSourceInstanceSettings<SkywalkingDataSourceOptions>) {
     super(instanceSettings);
   }
   query(options: DataQueryRequest<SkywalkingQuery>): Observable<DataQueryResponse> {
     const target: SkywalkingQuery = options.targets[0];
-    console.log('target', target);
     if (!target) {
       return of({ data: [emptyTraceDataFrame] });
     }
-    return super.query({ ...options, targets: [target] }).pipe(
+    const sanitized: SkywalkingQuery = { ...target, condition: sanitizeCondition(target.condition) };
+    return super.query({ ...options, targets: [sanitized] }).pipe(
       map((response) => {
         console.log('response', response);
         return response;
@@ -53,7 +53,7 @@ export class SkywalkingDataSource extends DataSourceWithBackend<SkywalkingQuery,
     return response.services || [];
   }
 
-  async queryEndpoints(serviceId: string | number, keyword: string, limit: number) {
+  async queryEndpoints(serviceId: string | number | null | undefined, keyword: string, limit: number) {
     const range = getTimeRangeValues();
     const data = {
       serviceId: serviceId,
@@ -76,10 +76,6 @@ export class SkywalkingDataSource extends DataSourceWithBackend<SkywalkingQuery,
     const response = await this.postResource<QueryInstancesQuery>('instances', data);
     return response.pods || [];
   }
-
-  // filterQuery(query: SkywalkingQuery): boolean {
-  //   return !!query.queryText;
-  // }
 }
 
 const emptyTraceDataFrame = toDataFrame({
@@ -91,3 +87,13 @@ const emptyTraceDataFrame = toDataFrame({
     },
   },
 });
+
+function sanitizeCondition(condition: SkywalkingQuery['condition']) {
+  const sanitized = { ...condition } as Record<string, unknown>;
+  for (const key of Object.keys(sanitized)) {
+    if (sanitized[key] === '' || sanitized[key] === ALL_OPERATIONS_VALUE) {
+      sanitized[key] = null;
+    }
+  }
+  return sanitized as SkywalkingQuery['condition'];
+}

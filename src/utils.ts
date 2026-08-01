@@ -71,4 +71,12 @@ export function descodeServiceID(id: string): string {
     return id;
   }
 }
+export function descodeEndpointName(endpointid: string ): string{
+  try {
+    const encodeName=endpointid.split(".1_")[1]
+    return atob(encodeName);
+  } catch {
+    return endpointid;
+  }
+}
 

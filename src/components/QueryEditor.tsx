@@ -3,10 +3,11 @@ import React from 'react';
 import { InlineField, InlineFieldRow, Input, RadioButtonGroup, Stack, useStyles2 } from '@grafana/ui';
 import { QueryEditorProps } from '@grafana/data';
 import { SkywalkingDataSource } from '../datasource';
-import { MyDataSourceOptions, SkywalkingQuery, SkywalkingQueryType } from '../types';
+import { SkywalkingDataSourceOptions, SkywalkingQuery, SkywalkingQueryType } from '../types';
 import SearchForm from './SearchForm';
+import { t } from '@grafana/i18n';
 
-type Props = QueryEditorProps<SkywalkingDataSource, SkywalkingQuery, MyDataSourceOptions>;
+type Props = QueryEditorProps<SkywalkingDataSource, SkywalkingQuery, SkywalkingDataSourceOptions>;
 
 export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) {
   const styles = useStyles2(getStyles);
@@ -18,8 +19,8 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
     switch (query.queryType) {
       case 'search':
         return <SearchForm datasource={datasource} query={query} onChange={onChange} />;
-      case 'dependencyGraph':
-        return null;
+      // case 'dependencyGraph':
+      //   return null;
       default:
         return (
           <InlineFieldRow>
@@ -45,14 +46,14 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
     <>
       <div className={styles.container}>
         <InlineFieldRow>
-          <InlineField label="Query Type" grow={true}>
+          <InlineField label={t('queryEditor.queryType.label','Query Type')} grow={true}>
             <Stack gap={1} alignItems="center" justifyContent="space-between">
               <RadioButtonGroup<SkywalkingQueryType>
                 value={query.queryType}
                 options={[
-                  { label: 'Search', value: 'search' },
-                  { value: undefined, label: 'TraceID' },
-                  { label: 'Dependency Graph', value: 'dependencyGraph' },
+                  { label: t('queryEditor.queryType.search', 'Search'), value: 'search' },
+                  { value: undefined, label: t('queryEditor.queryType.traceID', 'TraceID') },
+                  // { label: t('queryEditor.queryType.dependencyGraph', 'Dependency Graph'), value: 'dependencyGraph' },
                 ]}
                 onChange={(v) =>
                   onChange({

@@ -45,3 +45,6 @@ query queryInstancesByName($service: ServiceCondition!, $duration: Duration!) {
     }
   }
 }
+query queryHasQueryTracesV2Support {
+  hasQueryTracesV2Support
+}

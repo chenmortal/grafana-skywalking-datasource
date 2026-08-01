@@ -1,0 +1,39 @@
+{
+  "queryEditor": {
+    "queryType": {
+      "dependencyGraph": "",
+      "label": "搜索类型",
+      "search": "检索",
+      "traceID": "TraceID"
+    }
+  },
+  "searchForm": {
+    "endpoint": {
+      "label": "端点"
+    },
+    "instance": {
+      "label": "实例"
+    },
+    "layer": {
+      "label": "层级"
+    },
+    "order": {
+      "label": "排序",
+      "options": {
+        "newest": "最近",
+        "slowest": "最慢"
+      }
+    },
+    "service": {
+      "label": "服务"
+    },
+    "traceState": {
+      "label": "状态",
+      "options": {
+        "all": "全部",
+        "error": "错误",
+        "success": "成功"
+      }
+    }
+  }
+}

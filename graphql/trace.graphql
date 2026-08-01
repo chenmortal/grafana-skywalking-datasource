@@ -60,3 +60,73 @@ query queryV2Traces($condition: TraceQueryCondition) {
     }
   }
 }
+
+query queryTraces($condition: TraceQueryCondition) {
+  data: queryBasicTraces(condition: $condition) {
+    traces {
+      key: segmentId
+      endpointNames
+      duration
+      start
+      isError
+      traceIds
+    }
+  }
+}
+
+query querySpans($traceId: ID!) {
+	trace: queryTrace(traceId: $traceId) {
+		spans {
+			traceId
+			segmentId
+			spanId
+			parentSpanId
+			refs {
+				traceId
+				parentSegmentId
+				parentSpanId
+				type
+			}
+			serviceCode
+			serviceInstanceName
+			startTime
+			endTime
+			endpointName
+			type
+			peer
+			component
+			isError
+			layer
+			tags {
+				key
+				value
+			}
+			logs {
+				time
+				data {
+					key
+					value
+				}
+			}
+			attachedEvents {
+				startTime {
+					seconds
+					nanos
+				}
+				event
+				endTime {
+					seconds
+					nanos
+				}
+				tags {
+					key
+					value
+				}
+				summary {
+					key
+					value
+				}
+			}
+		}
+	}
+}

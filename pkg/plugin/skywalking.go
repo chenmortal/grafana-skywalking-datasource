@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -26,7 +27,13 @@ func ProvideService(httpClientProvider *httpclient.Provider) *Service {
 
 type datasourceInfo struct {
 	SkywalkingClient SkywalkingClient
-	Settings         backend.DataSourceInstanceSettings
+	SourceSettings   backend.DataSourceInstanceSettings
+	PluginSettings   PluginSettings
+}
+
+type PluginSettings struct {
+	Path string `json:"path"`
+	V2   bool   `json:"interfacev2"`
 }
 
 func newInstanceSettings(httpClientProvider *httpclient.Provider) datasource.InstanceFactoryFunc {
@@ -51,7 +58,14 @@ func newInstanceSettings(httpClientProvider *httpclient.Provider) datasource.Ins
 			return nil, fmt.Errorf("error creating skywalking client: %w", err)
 		}
 
-		return &datasourceInfo{SkywalkingClient: skywalkingClient}, err
+		pluginSettings := PluginSettings{
+			V2: false,
+		}
+		if err := json.Unmarshal(settings.JSONData, &pluginSettings); err != nil {
+			return nil, fmt.Errorf("error parsing plugin settings: %w", err)
+		}
+
+		return &datasourceInfo{SkywalkingClient: skywalkingClient, SourceSettings: settings, PluginSettings: pluginSettings}, err
 	}
 }
 func (s *Service) getDSInfo(ctx context.Context, pluginCtx backend.PluginContext) (*datasourceInfo, error) {
@@ -75,7 +89,21 @@ func (s *Service) CheckHealth(ctx context.Context, req *backend.CheckHealthReque
 			Message: err.Error(),
 		}, nil
 	}
-
+	if client.PluginSettings.V2 {
+		support, error := client.SkywalkingClient.QueryHasQueryTracesV2Support(ctx)
+		if error != nil {
+			return &backend.CheckHealthResult{
+				Status:  backend.HealthStatusError,
+				Message: error.Error(),
+			}, nil
+		}
+		if !support {
+			return &backend.CheckHealthResult{
+				Status:  backend.HealthStatusError,
+				Message: "Data source doesn't support queryTracesV2, please set false",
+			}, nil
+		}
+	}
 	_, err = client.SkywalkingClient.ListLayer(ctx)
 	if err != nil {
 		return &backend.CheckHealthResult{

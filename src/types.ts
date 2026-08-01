@@ -33,8 +33,9 @@ export interface DataSourceResponse {
 /**
  * These are options configured for each DataSource instance
  */
-export interface MyDataSourceOptions extends DataSourceJsonData {
+export interface SkywalkingDataSourceOptions extends DataSourceJsonData {
   path?: string;
+  interfacev2: boolean
 }
 
 /**
@@ -45,3 +46,4 @@ export interface MySecureJsonData {
 }
 
 export type SkywalkingQueryType = 'search' | 'dependencyGraph';
+export const ALL_OPERATIONS_VALUE = '__ALL__';
