@@ -3,7 +3,7 @@
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?logo=grafana&query=%24.version&url=https%3A%2F%2Fgrafana.com%2Fapi%2Fplugins%2Fchenmortal-skywalking-datasource&label=Marketplace&prefix=v&color=F47A20)
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?logo=grafana&query=%24.grafanaDependency&url=https%3A%2F%2Fgrafana.com%2Fapi%2Fplugins%2Fchenmortal-skywalking-datasource&label=Grafana&color=F47A20)
 
-[English](README.md) | 简体中文
+[English](https://github.com/chenmortal/grafana-skywalking-datasource/blob/main/README.md) | 简体中文
 
 Grafana 数据源插件，通过 GraphQL API 连接 **Apache SkyWalking** OAP 服务器，实现在 Grafana 中直接查看分布式链路追踪数据。
 
@@ -212,4 +212,4 @@ npm run codegen
 
 ## 许可证
 
-本项目基于 [Apache License 2.0](LICENSE) 许可。
+本项目基于 [Apache License 2.0](https://github.com/chenmortal/grafana-skywalking-datasource/blob/main/LICENSE) 许可。
