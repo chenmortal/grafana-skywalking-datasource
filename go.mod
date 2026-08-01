@@ -2,7 +2,7 @@ module github.com/chenmortal/skywalking
 
 go 1.26.5
 
-require github.com/grafana/grafana-plugin-sdk-go v0.292.2
+require github.com/grafana/grafana-plugin-sdk-go v0.294.0
 
 require github.com/Khan/genqlient v0.8.1
 
