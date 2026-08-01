@@ -58,6 +58,11 @@ func queryData(ctx context.Context, dsInfo *datasourceInfo, req *backend.QueryDa
 
 		// Handle "Query" query type
 		if query.QueryType == "" {
+			if query.Query == "" {
+				response.Responses[q.RefID] = backend.DataResponse{}
+				continue
+			}
+
 			var frame *data.Frame
 			if dsInfo.PluginSettings.V2 {
 				queryTrace, err := dsInfo.SkywalkingClient.TraceV2(ctx, query.Query, q.TimeRange)

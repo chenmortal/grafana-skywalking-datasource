@@ -32,8 +32,7 @@ type datasourceInfo struct {
 }
 
 type PluginSettings struct {
-	Path string `json:"path"`
-	V2   bool   `json:"interfacev2"`
+	V2 bool `json:"interfacev2"`
 }
 
 func newInstanceSettings(httpClientProvider *httpclient.Provider) datasource.InstanceFactoryFunc {
@@ -77,6 +76,9 @@ func (s *Service) getDSInfo(ctx context.Context, pluginCtx backend.PluginContext
 	instance, ok := i.(*datasourceInfo)
 	if !ok {
 		return nil, errors.New("failed to cast datasource info")
+	}
+	if instance.SourceSettings.URL == "" {
+		return nil, errors.New("data source URL is empty")
 	}
 
 	return instance, nil
