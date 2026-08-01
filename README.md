@@ -1,136 +1,217 @@
-# Grafana data source plugin template
+# Skywalking Datasource for Grafana
 
-This template is a starting point for building a Data Source Plugin for Grafana.
+English | [简体中文](README_zh-Hans.md)
 
-## What are Grafana data source plugins?
+![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?logo=grafana&query=%24.version&url=https%3A%2F%2Fgrafana.com%2Fapi%2Fplugins%2Fchenmortal-skywalking-datasource&label=Marketplace&prefix=v&color=F47A20)
+![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?logo=grafana&query=%24.grafanaDependency&url=https%3A%2F%2Fgrafana.com%2Fapi%2Fplugins%2Fchenmortal-skywalking-datasource&label=Grafana&color=F47A20)
 
-Grafana supports a wide range of data sources, including Prometheus, MySQL, and even Datadog. There’s a good chance you can already visualize metrics from the systems you have set up. In some cases, though, you already have an in-house metrics solution that you’d like to add to your Grafana dashboards. Grafana Data Source Plugins enables integrating such solutions with Grafana.
+A Grafana data source plugin that connects to an **Apache SkyWalking** OAP server via GraphQL API, enabling distributed tracing visualization directly in Grafana.
 
-## Getting started
+## Overview
 
-### Backend
+This plugin brings SkyWalking's distributed tracing data into Grafana, allowing you to:
 
-1. Update [Grafana plugin SDK for Go](https://grafana.com/developers/plugin-tools/key-concepts/backend-plugins/grafana-plugin-sdk-for-go) dependency to the latest minor version:
+- **Search traces** across layers, services, endpoints, and instances
+- **Visualize individual traces** with Grafana's native trace view
+- **Filter traces** by trace state (All / Success / Error) and sort by duration or start time
+- **Navigate from search results to detailed traces** via built-in data links
 
-   ```bash
-   go get -u github.com/grafana/grafana-plugin-sdk-go
-   go mod tidy
-   ```
+The plugin supports both SkyWalking v1 (`queryBasicTraces` / `queryTrace`) and v2 (`queryTraces`) GraphQL APIs, configurable via a toggle.
 
-2. Build plugin backend binaries for Linux, Windows and Darwin:
+## Requirements
 
-   ```bash
-   mage -v
-   ```
+- **Grafana** `>= 12.1.0`
+- **Apache SkyWalking OAP** server with GraphQL endpoint accessible from Grafana
 
-3. List all available Mage targets for additional commands:
+## Getting Started
 
-   ```bash
-   mage -l
-   ```
+### Installation
 
-### Frontend
+1. Install the plugin from the [Grafana Plugin Catalog](https://grafana.com/grafana/plugins/chenmortal-skywalking-datasource/) or by downloading the release archive.
+2. Place the plugin in your Grafana plugins directory (or follow the [Grafana plugin installation guide](https://grafana.com/docs/grafana/latest/administration/plugin-management/)).
 
-1. Install dependencies
+### Configuration
 
-   ```bash
-   npm install
-   ```
+1. In Grafana, navigate to **Administration** → **Plugins and data** → **Data sources** → **Add data source**.
+2. Search for **Skywalking** and select it.
+3. Fill in the configuration:
 
-2. Build plugin in development mode and run in watch mode
+| Setting                  | Description                                  | Example                                     |
+| ------------------------ | -------------------------------------------- | ------------------------------------------- |
+| **URL**                  | SkyWalking OAP GraphQL endpoint              | `http://skywalking-oap.example.com/graphql` |
+| **Path**                 | Additional resource path                     | `/resources` (default)                      |
+| **Interface Version v2** | Enable to use SkyWalking v2 Query Traces API | `true` / `false`                            |
+| **API Key**              | Authentication token (optional)              | `your-api-key`                              |
 
-   ```bash
-   npm run dev
-   ```
+> **Note:** Once the Interface Version v2 toggle is enabled, it cannot be reverted. This setting determines which SkyWalking API is used for trace queries.
 
-3. Build plugin in production mode
+### Provisioning
 
-   ```bash
-   npm run build
-   ```
+You can provision the datasource via Grafana's provisioning system:
 
-4. Run the tests (using Jest)
+```yaml
+datasources:
+  - name: 'skywalking'
+    type: 'chenmortal-skywalking-datasource'
+    access: proxy
+    url: 'http://skywalking-oap:12800/graphql'
+    jsonData:
+      path: '/resources'
+      interfacev2: false
+    secureJsonData:
+      apiKey: 'your-api-key'
+```
 
-   ```bash
-   # Runs the tests and watches for changes, requires git init first
-   npm run test
+## Query Types
 
-   # Exits after running all the tests
-   npm run test:ci
-   ```
+The plugin supports two query modes:
 
-5. Spin up a Grafana instance and run the plugin inside it (using Docker)
+### Search
 
-   ```bash
-   npm run server
-   ```
+Search traces across your SkyWalking infrastructure with the following filters:
 
-6. Run the E2E tests (using Playwright)
+- **Layer** — Select the layer (e.g., GENERAL, VIRTUAL_MQ, etc.)
+- **Service** — Filter by service name
+- **Endpoint** — Search endpoints by keyword
+- **Instance** — Filter by specific service instance
+- **Trace State** — All / Success / Error
+- **Query Order** — Sort by duration (slowest first) or start time (newest first)
 
-   ```bash
-   # Spins up a Grafana instance first that we tests against
-   npm run server
+### Trace ID
 
-   # If you wish to start a certain Grafana version. If not specified will use latest by default
-   GRAFANA_VERSION=11.3.0 npm run server
+Look up a specific trace by entering its Trace ID. The trace will be displayed using Grafana's native trace visualization with full span details including service tags, span tags, references, and timing information.
 
-   # Starts the tests
-   npm run e2e
-   ```
+## Dashboard Integration
 
-7. Run the linter
+The trace search results include links to individual trace views. When you select a trace from the search results, Grafana opens a detailed trace view showing:
 
-   ```bash
-   npm run lint
+- Span tree with parent-child relationships
+- Operation names, service names, and instance information
+- Duration breakdown for each span
+- Span tags (peer, layer, component, and custom tags)
+- Reference relationships (CHILD_OF, FOLLOWS_FROM)
 
-   # or
+## Development
 
-   npm run lint:fix
-   ```
+### Prerequisites
 
-# Distributing your plugin
+- **Go** `>= 1.26`
+- **Node.js** `>= 22`
+- **npm** `>= 11`
+- **Mage** (Go build tool)
 
-When distributing a Grafana plugin either within the community or privately the plugin must be signed so the Grafana application can verify its authenticity. This can be done with the `@grafana/sign-plugin` package.
+### Setup
 
-_Note: It's not necessary to sign a plugin during development. The docker development environment that is scaffolded with `@grafana/create-plugin` caters for running the plugin without a signature._
+```bash
+# Install frontend dependencies
+npm install
 
-## Initial steps
+# Install Go dependencies
+go mod download
 
-Before signing a plugin please read the Grafana [plugin publishing and signing criteria](https://grafana.com/legal/plugins/#plugin-publishing-and-signing-criteria) documentation carefully.
+# Generate GraphQL types (backend)
+go generate ./pkg/...
 
-`@grafana/create-plugin` has added the necessary commands and workflows to make signing and distributing a plugin via the grafana plugins catalog as straightforward as possible.
+# Generate GraphQL types (frontend)
+npm run codegen
+```
 
-Before signing a plugin for the first time please consult the Grafana [plugin signature levels](https://grafana.com/legal/plugins/#what-are-the-different-classifications-of-plugins) documentation to understand the differences between the types of signature level.
+### Build
 
-1. Create a [Grafana Cloud account](https://grafana.com/signup).
-2. Make sure that the first part of the plugin ID matches the slug of your Grafana Cloud account.
-   - _You can find the plugin ID in the `plugin.json` file inside your plugin directory. For example, if your account slug is `acmecorp`, you need to prefix the plugin ID with `acmecorp-`._
-3. Create a Grafana Cloud API key with the `PluginPublisher` role.
-4. Keep a record of this API key as it will be required for signing a plugin
+```bash
+# Build both frontend and backend
+npm run build
 
-## Signing a plugin
+# Development mode with watch
+npm run dev
+```
 
-### Using Github actions release workflow
+### Testing
 
-If the plugin is using the github actions supplied with `@grafana/create-plugin` signing a plugin is included out of the box. The [release workflow](./.github/workflows/release.yml) can prepare everything to make submitting your plugin to Grafana as easy as possible. Before being able to sign the plugin however a secret needs adding to the Github repository.
+```bash
+# Run frontend unit tests
+npm test
 
-1. Please navigate to "settings > secrets > actions" within your repo to create secrets.
-2. Click "New repository secret"
-3. Name the secret "GRAFANA_API_KEY"
-4. Paste your Grafana Cloud API key in the Secret field
-5. Click "Add secret"
+# Run frontend tests for CI
+npm run test:ci
 
-#### Push a version tag
+# Run Go backend tests
+go test ./...
 
-To trigger the workflow we need to push a version tag to github. This can be achieved with the following steps:
+# Run end-to-end tests
+npm run e2e
+```
 
-1. Run `npm version <major|minor|patch>`
-2. Run `git push origin main --follow-tags`
+### Lint & Type Check
 
-## Learn more
+```bash
+# TypeScript type checking
+npm run typecheck
 
-Below you can find source code for existing app plugins and other related documentation.
+# ESLint
+npm run lint
 
-- [Basic data source plugin example](https://github.com/grafana/grafana-plugin-examples/tree/master/examples/datasource-basic#readme)
-- [`plugin.json` documentation](https://grafana.com/developers/plugin-tools/reference/plugin-json)
-- [How to sign a plugin?](https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin)
+# ESLint with auto-fix
+npm run lint:fix
+```
+
+### Local Development with Docker
+
+```bash
+# Start Grafana with the plugin mounted
+npm run server
+```
+
+This starts a Grafana instance via Docker Compose with the plugin automatically loaded.
+
+### Project Structure
+
+```
+├── pkg/                          # Go backend plugin
+│   ├── main.go                   # Entry point
+│   └── plugin/
+│       ├── datasource.go         # Datasource lifecycle
+│       ├── skywalking.go         # Service layer, health checks
+│       ├── client.go             # GraphQL API client
+│       ├── query.go              # Query handling & trace frame transformation
+│       ├── callresource.go       # HTTP resource routes
+│       └── graphql.go            # Generated GraphQL types
+├── src/                          # Frontend TypeScript/React
+│   ├── module.ts                 # Plugin registration
+│   ├── datasource.ts             # Data source class
+│   ├── components/
+│   │   ├── ConfigEditor.tsx      # Datasource configuration UI
+│   │   ├── QueryEditor.tsx       # Query builder
+│   │   └── SearchForm.tsx        # Trace search form
+│   └── locales/                  # i18n translations (en-US, zh-Hans)
+├── graphql/                      # GraphQL schema & query definitions
+├── provisioning/                 # Grafana provisioning examples
+└── tests/                        # Playwright e2e tests
+```
+
+The backend is written in Go and communicates with the SkyWalking OAP server via GraphQL. The frontend is a TypeScript/React application that provides the query editor UI and integrates with Grafana's trace visualization.
+
+### GraphQL Code Generation
+
+The project uses code generation for both backend and frontend:
+
+- **Backend:** [genqlient](https://github.com/Khan/genqlient) generates Go types from GraphQL operations defined in `graphql/`
+- **Frontend:** [@graphql-codegen](https://the-guild.dev/graphql/codegen) generates TypeScript types from the same GraphQL schema
+
+To regenerate types after schema changes:
+
+```bash
+# Backend
+go generate ./pkg/...
+
+# Frontend
+npm run codegen
+```
+
+## Contributing
+
+Issues and pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+
+This project is licensed under the [Apache License 2.0](LICENSE).

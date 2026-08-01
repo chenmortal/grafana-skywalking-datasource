@@ -8,7 +8,7 @@
   "tracing": true,
   "executable": "gpx_skywalking",
   "info": {
-    "description": "",
+    "description": "Chenmortal's Skywalking datasource plugin for Grafana",
     "author": {
       "name": "Chenmortal"
     },
@@ -18,7 +18,16 @@
       "large": "img/logo.svg"
     },
     "links": [],
-    "screenshots": [],
+    "screenshots": [
+      {
+        "name": "Search",
+        "path": "img/search.png"
+      },
+      {
+        "name": "Query",
+        "path": "img/query.png"
+      }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
