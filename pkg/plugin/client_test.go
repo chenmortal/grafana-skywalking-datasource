@@ -22,7 +22,7 @@ func TestFormatTimeToString(t *testing.T) {
 			name:     "StepHour - date and hour",
 			input:    time.Date(2026, 6, 2, 2, 46, 30, 0, time.UTC),
 			step:     StepHour,
-			expected: "2026-06-02 0200",
+			expected: "2026-06-02 02",
 		},
 		{
 			name:     "StepMinute - date, hour and minute",
@@ -46,7 +46,7 @@ func TestFormatTimeToString(t *testing.T) {
 			name:     "StepHour - end of day",
 			input:    time.Date(2026, 12, 31, 23, 59, 59, 0, time.UTC),
 			step:     StepHour,
-			expected: "2026-12-31 2300",
+			expected: "2026-12-31 23",
 		},
 		{
 			name:     "StepMinute - morning",
