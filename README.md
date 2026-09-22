@@ -39,11 +39,17 @@ The plugin supports both SkyWalking v1 (`queryBasicTraces` / `queryTrace`) and v
 | Setting                  | Description                                  | Example                                     |
 | ------------------------ | -------------------------------------------- | ------------------------------------------- |
 | **URL**                  | SkyWalking OAP GraphQL endpoint              | `http://skywalking-oap.example.com/graphql` |
-| **Path**                 | Additional resource path                     | `/resources` (default)                      |
 | **Interface Version v2** | Enable to use SkyWalking v2 Query Traces API | `true` / `false`                            |
-| **API Key**              | Authentication token (optional)              | `your-api-key`                              |
 
 > **Note:** Once the Interface Version v2 toggle is enabled, it cannot be reverted. This setting determines which SkyWalking API is used for trace queries.
+
+If your SkyWalking OAP server requires authentication, use the standard **Authentication** section on the data source configuration page:
+
+- **Authentication method** — Basic authentication (user + password), or no authentication
+- **HTTP headers** — custom headers sent with every request (e.g. `Authorization: Bearer ...`); header values are stored securely
+- **TLS settings** — self-signed CA certificate, TLS client authentication (ServerName + client certificate/key), and skipping TLS certificate validation
+
+Credentials are stored in Grafana's secure JSON data and applied automatically to every OAP GraphQL request through Grafana's standard HTTP client options.
 
 ### Provisioning
 
@@ -56,10 +62,12 @@ datasources:
     access: proxy
     url: 'http://skywalking-oap:12800/graphql'
     jsonData:
-      path: '/resources'
       interfacev2: false
+    # Optional: authenticate with Grafana's standard data source auth keys, e.g. Basic auth
+    basicAuth: true
+    basicAuthUser: 'your-user'
     secureJsonData:
-      apiKey: 'your-api-key'
+      basicAuthPassword: 'your-password'
 ```
 
 ## Query Types

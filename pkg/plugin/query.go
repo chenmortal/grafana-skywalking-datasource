@@ -37,18 +37,18 @@ func queryData(ctx context.Context, dsInfo *datasourceInfo, req *backend.QueryDa
 			var frames *data.Frame
 			if dsInfo.PluginSettings.V2 {
 				queryTrace, err := dsInfo.SkywalkingClient.QueryV2Traces(ctx, query.Condition, q.TimeRange)
-				frames = TransformQueryV2Response(queryTrace, dsInfo.SourceSettings.UID, dsInfo.SourceSettings.Name)
 				if err != nil {
 					response.Responses[q.RefID] = backend.ErrorResponseWithErrorSource(err)
 					continue
 				}
+				frames = TransformQueryV2Response(queryTrace, dsInfo.SourceSettings.UID, dsInfo.SourceSettings.Name)
 			} else {
 				queryTrace, err := dsInfo.SkywalkingClient.QueryBasicTraces(ctx, query.Condition, q.TimeRange)
-				frames = TransformQueryBasicResponse(queryTrace, dsInfo.SourceSettings.UID, dsInfo.SourceSettings.Name)
 				if err != nil {
 					response.Responses[q.RefID] = backend.ErrorResponseWithErrorSource(err)
 					continue
 				}
+				frames = TransformQueryBasicResponse(queryTrace, dsInfo.SourceSettings.UID, dsInfo.SourceSettings.Name)
 			}
 
 			response.Responses[q.RefID] = backend.DataResponse{
@@ -66,18 +66,18 @@ func queryData(ctx context.Context, dsInfo *datasourceInfo, req *backend.QueryDa
 			var frame *data.Frame
 			if dsInfo.PluginSettings.V2 {
 				queryTrace, err := dsInfo.SkywalkingClient.TraceV2(ctx, query.Query, q.TimeRange)
-				frame = TransformTraceV2Response(queryTrace, ctx, dsInfo, q)
 				if err != nil {
 					response.Responses[q.RefID] = backend.ErrorResponseWithErrorSource(err)
 					continue
 				}
+				frame = TransformTraceV2Response(queryTrace, ctx, dsInfo, q)
 			} else {
 				queryTrace, err := dsInfo.SkywalkingClient.TraceV1(ctx, query.Query, q.TimeRange)
-				frame = TransformTraceV1Response(queryTrace, ctx, dsInfo, q)
 				if err != nil {
 					response.Responses[q.RefID] = backend.ErrorResponseWithErrorSource(err)
 					continue
 				}
+				frame = TransformTraceV1Response(queryTrace, ctx, dsInfo, q)
 			}
 
 			response.Responses[q.RefID] = backend.DataResponse{

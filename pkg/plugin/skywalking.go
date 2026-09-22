@@ -15,6 +15,11 @@ import (
 
 var logger = backend.NewLoggerWith("logger", "skywalking")
 
+// healthCheckGenericErrorMessage is shown in the "Save & test" UI when the
+// health check fails. Raw connection/GraphQL errors (which may contain
+// internal hostnames, IPs or ports) are logged server-side only.
+const healthCheckGenericErrorMessage = "Unable to connect, see Grafana server log for details"
+
 type Service struct {
 	im instancemgmt.InstanceManager
 }
@@ -84,22 +89,26 @@ func (s *Service) getDSInfo(ctx context.Context, pluginCtx backend.PluginContext
 	return instance, nil
 }
 func (s *Service) CheckHealth(ctx context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
+	logger := logger.FromContext(ctx)
 	client, err := s.getDSInfo(ctx, backend.PluginConfigFromContext(ctx))
 	if err != nil {
+		logger.Error("Health check failed to get datasource info", "error", err)
 		return &backend.CheckHealthResult{
 			Status:  backend.HealthStatusError,
-			Message: err.Error(),
+			Message: healthCheckGenericErrorMessage,
 		}, nil
 	}
 	if client.PluginSettings.V2 {
 		support, error := client.SkywalkingClient.QueryHasQueryTracesV2Support(ctx)
 		if error != nil {
+			logger.Error("Health check failed to query queryTracesV2 support", "error", error)
 			return &backend.CheckHealthResult{
 				Status:  backend.HealthStatusError,
-				Message: error.Error(),
+				Message: healthCheckGenericErrorMessage,
 			}, nil
 		}
 		if !support {
+			// Actionable configuration guidance, not a raw error: keep it user-facing.
 			return &backend.CheckHealthResult{
 				Status:  backend.HealthStatusError,
 				Message: "Data source doesn't support queryTracesV2, please set false",
@@ -108,9 +117,10 @@ func (s *Service) CheckHealth(ctx context.Context, req *backend.CheckHealthReque
 	}
 	_, err = client.SkywalkingClient.ListLayer(ctx)
 	if err != nil {
+		logger.Error("Health check failed to list layers", "error", err)
 		return &backend.CheckHealthResult{
 			Status:  backend.HealthStatusError,
-			Message: err.Error(),
+			Message: healthCheckGenericErrorMessage,
 		}, nil
 	}
 
