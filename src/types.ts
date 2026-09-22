@@ -34,15 +34,7 @@ export interface DataSourceResponse {
  * These are options configured for each DataSource instance
  */
 export interface SkywalkingDataSourceOptions extends DataSourceJsonData {
-  path?: string;
   interfacev2: boolean
-}
-
-/**
- * Value that is used in the backend, but never sent over HTTP to the frontend
- */
-export interface MySecureJsonData {
-  apiKey?: string;
 }
 
 export type SkywalkingQueryType = 'search' | 'dependencyGraph';

@@ -39,11 +39,17 @@ Grafana 数据源插件，通过 GraphQL API 连接 **Apache SkyWalking** OAP �
 | 配置项                   | 说明                                | 示例                                        |
 | ------------------------ | ----------------------------------- | ------------------------------------------- |
 | **URL**                  | SkyWalking OAP GraphQL 端点地址     | `http://skywalking-oap.example.com/graphql` |
-| **Path**                 | 附加资源路径                        | `/resources`（默认值）                      |
 | **Interface Version v2** | 启用 SkyWalking v2 Query Traces API | `true` / `false`                            |
-| **API Key**              | 认证令牌（可选）                    | `your-api-key`                              |
 
 > **注意：** 开启 Interface Version v2 后无法回退。此设置决定使用哪个版本的 SkyWalking API 进行链路查询。
+
+如果 SkyWalking OAP 服务器需要认证，请使用数据源配置页中标准的 **Authentication** 区块：
+
+- **Authentication method** — Basic authentication（用户名 + 密码）或无认证
+- **HTTP headers** — 随每个请求发送的自定义 Header（如 `Authorization: Bearer ...`），Header 值以安全方式存储
+- **TLS settings** — 自签名 CA 证书、TLS 客户端认证（ServerName + 客户端证书/私钥）、跳过 TLS 证书校验
+
+凭据存储在 Grafana 的 secureJsonData 中，并通过 Grafana 标准 HTTP 客户端选项自动应用于每个 OAP GraphQL 请求。
 
 ### 通过 Provisioning 配置
 
@@ -54,10 +60,12 @@ datasources:
     access: proxy
     url: 'http://skywalking-oap:12800/graphql'
     jsonData:
-      path: '/resources'
       interfacev2: false
+    # 可选：使用 Grafana 数据源标准认证键，例如 Basic auth
+    basicAuth: true
+    basicAuthUser: 'your-user'
     secureJsonData:
-      apiKey: 'your-api-key'
+      basicAuthPassword: 'your-password'
 ```
 
 ## 查询类型

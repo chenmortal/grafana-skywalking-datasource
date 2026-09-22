@@ -1,9 +1,9 @@
 import React from 'react';
 import { Divider, InlineField, InlineFieldRow, InlineSwitch } from '@grafana/ui';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
-import { SkywalkingDataSourceOptions, MySecureJsonData } from '../types';
-import { ConnectionSettings } from '@grafana/plugin-ui';
-interface Props extends DataSourcePluginOptionsEditorProps<SkywalkingDataSourceOptions, MySecureJsonData> {}
+import { SkywalkingDataSourceOptions } from '../types';
+import { Auth, ConnectionSettings, convertLegacyAuthProps } from '@grafana/plugin-ui';
+interface Props extends DataSourcePluginOptionsEditorProps<SkywalkingDataSourceOptions> {}
 
 export function ConfigEditor(props: Props) {
   const { onOptionsChange, options } = props;
@@ -16,6 +16,7 @@ export function ConfigEditor(props: Props) {
         onChange={onOptionsChange}
         urlPlaceholder="http://skywalking.example.com/graphql"
       />
+      <Auth {...convertLegacyAuthProps({ config: options, onChange: onOptionsChange })} />
       <InlineFieldRow>
         <InlineField label="Interface Version  v2" labelWidth={24}>
           <InlineSwitch
