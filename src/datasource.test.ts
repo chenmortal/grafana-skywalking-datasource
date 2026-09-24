@@ -104,13 +104,13 @@ describe('SkywalkingDataSource.query', () => {
 
   it('keeps hidden targets so the backend still processes them', async () => {
     const ds = new SkywalkingDataSource(instanceSettings);
-    const targets = [searchTarget('A'), searchTarget('B', { hidden: true })];
+    const targets = [searchTarget('A'), searchTarget('B', { hide: true })];
 
     await firstValueFrom(ds.query(buildRequest(targets)));
 
     const request = superQuerySpy.mock.calls[0][0] as DataQueryRequest<SkywalkingQuery>;
     expect(request.targets).toHaveLength(2);
-    expect(request.targets[1].hidden).toBe(true);
+    expect(request.targets[1].hide).toBe(true);
   });
 
   it('leaves targets without a condition unchanged', async () => {

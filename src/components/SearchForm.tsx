@@ -1,4 +1,6 @@
 import { css } from '@emotion/css';
+import { AppEvents } from '@grafana/data';
+import { getAppEvents } from '@grafana/runtime';
 import { Combobox, ComboboxOption, InlineField, InlineFieldRow, RadioButtonGroup, Stack } from '@grafana/ui';
 import { SkywalkingDataSource } from '../datasource';
 import { ALL_OPERATIONS_VALUE, DEFAULT_QUERY, SkywalkingQuery } from '../types';
@@ -20,6 +22,13 @@ export const ALL_COMBOBOX_OPTION: ComboboxOption<string> = {
   value: ALL_OPERATIONS_VALUE,
 };
 
+const notifyError = (message: string) => {
+  getAppEvents().publish({
+    type: AppEvents.alertError.name,
+    payload: [message],
+  });
+};
+
 export function SearchForm({ datasource, query, onChange }: Props) {
   const [layerOptions, setLayerOptions] = useState<ComboboxOption[]>([]);
   const [serviceOptions, setServiceOptions] = useState<Array<ComboboxOption<string>>>([]);
@@ -36,9 +45,11 @@ export function SearchForm({ datasource, query, onChange }: Props) {
           const options = layerList.map((l: string) => ({ label: l, value: l }));
           setLayerOptions(options);
         }
-      } catch (error) {
-        console.error('Failed to load layers:', error);
+      } catch {
         if (!cancelled) {
+          notifyError(
+            t('searchForm.errors.loadLayers', 'Failed to load layers. The default layer is used instead.')
+          );
           setLayerOptions([{ label: DEFAULT_QUERY.layer, value: DEFAULT_QUERY.layer! }]);
         }
       }
@@ -64,11 +75,11 @@ export function SearchForm({ datasource, query, onChange }: Props) {
             group: s.group,
           })),
         ]);
-      } catch (error) {
+      } catch {
         if (cancelled) {
           return;
         }
-        console.error('Failed to load services:', error);
+        notifyError(t('searchForm.errors.loadServices', 'Failed to load services for the selected layer.'));
         setServiceOptions([ALL_COMBOBOX_OPTION]);
       }
     })();
@@ -103,7 +114,7 @@ export function SearchForm({ datasource, query, onChange }: Props) {
             })),
           ]);
         } else {
-          console.error('Failed to fetch endpoint options:', endpointsResult.reason);
+          notifyError(t('searchForm.errors.loadEndpoints', 'Failed to load endpoint options.'));
           setEndpointOptions([ALL_COMBOBOX_OPTION]);
         }
         if (instancesResult.status === 'fulfilled') {
@@ -115,14 +126,16 @@ export function SearchForm({ datasource, query, onChange }: Props) {
             })),
           ]);
         } else {
-          console.error('Failed to fetch instance options:', instancesResult.reason);
+          notifyError(t('searchForm.errors.loadInstances', 'Failed to load instance options.'));
           setServiceInstanceIdOptions([ALL_COMBOBOX_OPTION]);
         }
-      } catch (error) {
+      } catch {
         if (cancelled) {
           return;
         }
-        console.error('Failed to fetch endpoint options:', error);
+        notifyError(
+          t('searchForm.errors.loadEndpointAndInstanceOptions', 'Failed to load endpoint and instance options.')
+        );
         setEndpointOptions([ALL_COMBOBOX_OPTION]);
         setServiceInstanceIdOptions([ALL_COMBOBOX_OPTION]);
       }
@@ -150,8 +163,8 @@ export function SearchForm({ datasource, query, onChange }: Props) {
             description: 'service : ' + descodeServiceID(e.id),
           })),
         ];
-      } catch (error) {
-        console.error('Failed to fetch endpoint options:', error);
+      } catch {
+        notifyError(t('searchForm.errors.searchEndpoints', 'Failed to search endpoints.'));
         return [ALL_COMBOBOX_OPTION];
       }
     },
