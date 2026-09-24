@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
@@ -19,6 +20,17 @@ var logger = backend.NewLoggerWith("logger", "skywalking")
 // health check fails. Raw connection/GraphQL errors (which may contain
 // internal hostnames, IPs or ports) are logged server-side only.
 const healthCheckGenericErrorMessage = "Unable to connect, see Grafana server log for details"
+
+// healthCheckV2UnsupportedMessage is shown when the OAP server does not offer
+// the v2 trace query API. It is deliberately actionable: it names the exact
+// setting to turn off, and the config editor keeps that switch toggleable at
+// all times so users can recover directly from the data source config page.
+const healthCheckV2UnsupportedMessage = `The SkyWalking OAP server doesn't support the v2 trace query API (queryTraces requires OAP 10.3.0 or newer). Turn off "Interface Version v2" in the data source settings, then save and test again.`
+
+// v2ProbeField is the GraphQL field used to detect queryTracesV2 support.
+// OAP servers older than 10.3.0 don't define it at all and reject the probe
+// query with a GraphQL field-undefined validation error.
+const v2ProbeField = "hasQueryTracesV2Support"
 
 type Service struct {
 	im instancemgmt.InstanceManager
@@ -99,9 +111,21 @@ func (s *Service) CheckHealth(ctx context.Context, req *backend.CheckHealthReque
 		}, nil
 	}
 	if client.PluginSettings.V2 {
-		support, error := client.SkywalkingClient.QueryHasQueryTracesV2Support(ctx)
-		if error != nil {
-			logger.Error("Health check failed to query queryTracesV2 support", "error", error)
+		support, err := client.SkywalkingClient.QueryHasQueryTracesV2Support(ctx)
+		if err != nil {
+			// OAP servers older than 10.3.0 don't define the probe field and
+			// reject the query with a GraphQL field-undefined validation
+			// error. Treat that as "v2 unsupported" so users get the same
+			// actionable recovery guidance instead of a generic message that
+			// wrongly suggests a connectivity problem.
+			if isV2ProbeFieldUndefined(err) {
+				logger.Warn("Health check detected OAP server without queryTracesV2 support", "error", err)
+				return &backend.CheckHealthResult{
+					Status:  backend.HealthStatusError,
+					Message: healthCheckV2UnsupportedMessage,
+				}, nil
+			}
+			logger.Error("Health check failed to query queryTracesV2 support", "error", err)
 			return &backend.CheckHealthResult{
 				Status:  backend.HealthStatusError,
 				Message: healthCheckGenericErrorMessage,
@@ -111,7 +135,7 @@ func (s *Service) CheckHealth(ctx context.Context, req *backend.CheckHealthReque
 			// Actionable configuration guidance, not a raw error: keep it user-facing.
 			return &backend.CheckHealthResult{
 				Status:  backend.HealthStatusError,
-				Message: "Data source doesn't support queryTracesV2, please set false",
+				Message: healthCheckV2UnsupportedMessage,
 			}, nil
 		}
 	}
@@ -128,6 +152,20 @@ func (s *Service) CheckHealth(ctx context.Context, req *backend.CheckHealthReque
 		Status:  backend.HealthStatusOk,
 		Message: "Data source is working",
 	}, nil
+}
+
+// isV2ProbeFieldUndefined reports whether err is the GraphQL validation error
+// that OAP servers older than 10.3.0 return for the hasQueryTracesV2Support
+// probe (graphql-java: "Field 'hasQueryTracesV2Support' in type 'Query' is
+// undefined"). The check is deliberately conservative — it requires both the
+// probe field name and an "undefined"/"cannot query field" phrase — so
+// unrelated network or server errors keep the generic health check message.
+func isV2ProbeFieldUndefined(err error) bool {
+	msg := strings.ToLower(err.Error())
+	if !strings.Contains(msg, strings.ToLower(v2ProbeField)) {
+		return false
+	}
+	return strings.Contains(msg, "undefined") || strings.Contains(msg, "cannot query field")
 }
 
 func (s *Service) CallResource(ctx context.Context, req *backend.CallResourceRequest, sender backend.CallResourceResponseSender) error {

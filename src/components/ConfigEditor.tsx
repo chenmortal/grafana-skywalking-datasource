@@ -18,9 +18,13 @@ export function ConfigEditor(props: Props) {
       />
       <Auth {...convertLegacyAuthProps({ config: options, onChange: onOptionsChange })} />
       <InlineFieldRow>
-        <InlineField label="Interface Version  v2" labelWidth={24}>
+        <InlineField
+          label="Interface Version v2"
+          labelWidth={24}
+          tooltip="Use the SkyWalking v2 trace query API (queryTraces). Requires OAP 10.3.0 or newer. If Save & test reports that your OAP server doesn't support v2, turn this switch back off to fall back to the v1 API."
+        >
           <InlineSwitch
-            disabled={options.jsonData.interfacev2 ?? false}
+            label="Interface Version v2"
             value={options.jsonData.interfacev2 ?? false}
             onChange={(e) =>
               onOptionsChange({ ...options, jsonData: { ...options.jsonData, interfacev2: e.currentTarget.checked } })

@@ -39,9 +39,9 @@ The plugin supports both SkyWalking v1 (`queryBasicTraces` / `queryTrace`) and v
 | Setting                  | Description                                  | Example                                     |
 | ------------------------ | -------------------------------------------- | ------------------------------------------- |
 | **URL**                  | SkyWalking OAP GraphQL endpoint              | `http://skywalking-oap.example.com/graphql` |
-| **Interface Version v2** | Enable to use SkyWalking v2 Query Traces API | `true` / `false`                            |
+| **Interface Version v2** | Enable to use SkyWalking v2 Query Traces API (requires OAP 10.3.0 or newer) | `true` / `false`                            |
 
-> **Note:** Once the Interface Version v2 toggle is enabled, it cannot be reverted. This setting determines which SkyWalking API is used for trace queries.
+> **Note:** The toggle can be changed at any time — it only selects which SkyWalking API is used for trace queries (v2 `queryTraces` vs. v1 `queryBasicTraces` / `queryTrace`). The v2 API requires SkyWalking OAP **10.3.0 or newer**. If **Save & test** reports that your OAP server doesn't support the v2 trace query API, turn **Interface Version v2** back off and save again to fall back to the v1 API.
 
 If your SkyWalking OAP server requires authentication, use the standard **Authentication** section on the data source configuration page:
 
