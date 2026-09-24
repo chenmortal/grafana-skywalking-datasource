@@ -11,24 +11,21 @@ import { DataSourceWithBackend, getTemplateSrv } from '@grafana/runtime';
 import { SkywalkingQuery, SkywalkingDataSourceOptions, DEFAULT_QUERY, ALL_OPERATIONS_VALUE } from './types';
 import { ListLayerQuery, QueryEndpointsQuery, QueryInstancesQuery, QueryServicesQuery } from 'type/operations';
 import { getTimeRangeValues } from 'utils';
-import { map, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 export class SkywalkingDataSource extends DataSourceWithBackend<SkywalkingQuery, SkywalkingDataSourceOptions> {
   constructor(instanceSettings: DataSourceInstanceSettings<SkywalkingDataSourceOptions>) {
     super(instanceSettings);
   }
   query(options: DataQueryRequest<SkywalkingQuery>): Observable<DataQueryResponse> {
-    const target: SkywalkingQuery = options.targets[0];
-    if (!target) {
+    if (!options.targets.length) {
       return of({ data: [emptyTraceDataFrame] });
     }
-    const sanitized: SkywalkingQuery = { ...target, condition: sanitizeCondition(target.condition) };
-    return super.query({ ...options, targets: [sanitized] }).pipe(
-      map((response) => {
-        console.log('response', response);
-        return response;
-      })
-    );
+    const sanitized: SkywalkingQuery[] = options.targets.map((target) => ({
+      ...target,
+      condition: target.condition ? sanitizeCondition(target.condition) : target.condition,
+    }));
+    return super.query({ ...options, targets: sanitized });
   }
   getDefaultQuery(_: CoreApp): Partial<SkywalkingQuery> {
     return DEFAULT_QUERY;
