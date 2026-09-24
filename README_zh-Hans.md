@@ -39,9 +39,9 @@ Grafana 数据源插件，通过 GraphQL API 连接 **Apache SkyWalking** OAP �
 | 配置项                   | 说明                                | 示例                                        |
 | ------------------------ | ----------------------------------- | ------------------------------------------- |
 | **URL**                  | SkyWalking OAP GraphQL 端点地址     | `http://skywalking-oap.example.com/graphql` |
-| **Interface Version v2** | 启用 SkyWalking v2 Query Traces API | `true` / `false`                            |
+| **Interface Version v2** | 启用 SkyWalking v2 Query Traces API（需要 OAP 10.3.0 及以上版本） | `true` / `false`                            |
 
-> **注意：** 开启 Interface Version v2 后无法回退。此设置决定使用哪个版本的 SkyWalking API 进行链路查询。
+> **注意：** 该开关可随时切换——它只决定链路查询使用哪个版本的 SkyWalking API（v2 `queryTraces` 或 v1 `queryBasicTraces` / `queryTrace`）。v2 API 需要 SkyWalking OAP **10.3.0 及以上版本**。如果 **Save & test** 提示 OAP 服务器不支持 v2 链路查询 API，关闭 **Interface Version v2** 并重新保存即可回退到 v1 API。
 
 如果 SkyWalking OAP 服务器需要认证，请使用数据源配置页中标准的 **Authentication** 区块：
 

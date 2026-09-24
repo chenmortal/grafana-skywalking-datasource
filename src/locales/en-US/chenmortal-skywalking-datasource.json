@@ -11,6 +11,14 @@
     "endpoint": {
       "label": "Endpoint"
     },
+    "errors": {
+      "loadEndpointAndInstanceOptions": "Failed to load endpoint and instance options.",
+      "loadEndpoints": "Failed to load endpoint options.",
+      "loadInstances": "Failed to load instance options.",
+      "loadLayers": "Failed to load layers. The default layer is used instead.",
+      "loadServices": "Failed to load services for the selected layer.",
+      "searchEndpoints": "Failed to search endpoints."
+    },
     "instance": {
       "label": "Instance"
     },

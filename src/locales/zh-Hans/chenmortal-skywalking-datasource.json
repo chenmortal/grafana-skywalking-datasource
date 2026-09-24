@@ -11,6 +11,14 @@
     "endpoint": {
       "label": "端点"
     },
+    "errors": {
+      "loadEndpointAndInstanceOptions": "加载端点和实例选项失败。",
+      "loadEndpoints": "加载端点选项失败。",
+      "loadInstances": "加载实例选项失败。",
+      "loadLayers": "加载层级失败，已改用默认层级。",
+      "loadServices": "加载所选层级的服务失败。",
+      "searchEndpoints": "搜索端点失败。"
+    },
     "instance": {
       "label": "实例"
     },
